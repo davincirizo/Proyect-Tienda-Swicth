@@ -36,7 +36,6 @@ export default function NavBarUser() {
   const [loading, setLoading] = useState(false);
 
   const logout = async()=>{
-    const token = storage.get('authToken')
     const user = storage.get('authUser')
     storage.remove('authToken');
     storage.remove('authUser');
