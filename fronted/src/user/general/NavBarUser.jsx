@@ -12,6 +12,7 @@ import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import SwipeableTemporaryDrawer from './Drewer';
+import Register from '../../auth/Register';
 
 
 
@@ -115,6 +116,7 @@ export default function NavBarUser() {
   );
 
   return (
+    <>
     <Box sx={{ flexGrow: 1 }}>
       <AppBar sx={{background:"#000000"}}>
         <Toolbar>
@@ -175,10 +177,18 @@ export default function NavBarUser() {
               <MoreIcon />
             </IconButton>
           </Box>
+          <Typography margin={'20px'}>
+             <Register/>
+           
+          </Typography>
         </Toolbar>
       </AppBar>
       {renderMobileMenu}
       {renderMenu}
-    </Box>
+      </Box>
+    
+    
+    </>
+    
   );
 }
