@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes ,Route} from 'react-router-dom'
 import DashboardSaler from './saler/pages/DashboardSaler'
+import DashboardUser from './user/pages/DashboardUser'
 
 
 function App() {
@@ -9,7 +10,9 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
-          <Route path='/' element={<DashboardSaler/>}/>
+        <Route path='/' element={<DashboardUser/>}/>
+
+        <Route path='/dashboardSaler' element={<DashboardSaler/>}/>
       </Routes>
     </BrowserRouter>
     </>
