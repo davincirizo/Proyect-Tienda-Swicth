@@ -25,7 +25,7 @@ class AuthController extends Controller
         if($request->password != $request->confirm_password){
             return response()->json([
                 'status' => false,
-                'errors' => 'Passwords do not match',
+                'errors' => 'La contraseña debe coincidir',
             ],400);
         }
         $user = new User();
