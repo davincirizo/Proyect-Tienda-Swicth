@@ -4,13 +4,13 @@ import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
 import { useForm } from "react-hook-form"
 import axios from "axios"
-import { show_alert } from '../general/notifications/ShowAlert';
+import { show_alert_succes} from '../general/notifications/ShowAlert';
 import { useState } from 'react';
-import './css/register.css'
 import ContactsIcon from '@mui/icons-material/Contacts';
 import MailIcon from '@mui/icons-material/Mail';
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
+import {PulseLoader} from "react-spinners";
 
 const style = {
   position: 'absolute',
@@ -37,27 +37,31 @@ export default function Register() {
   const url = import.meta.env.VITE_BACKEND_URL
   const { register, handleSubmit } = useForm()
   const [errors,setErrors] = useState([]);
+  const [loading, setLoading] = useState(false);
 
 
   const register_user = async (data) =>{
     try{
+      setLoading(true)
     const res = await axios.post(`${url}/register`,{
       email:data.email,
       name:data.name,     
       password:data.password,     
       confirm_password:data.confirm_password}
   )
-    setOpen(false)  
-    show_alert(res.data.msg)
+      setLoading(false)
+      setOpen(false)
+      show_alert_succes(res.data.msg)
 
             }
   catch(e){
+    setLoading(false)
     setErrors(e.response.data.errors)
   }
   }
 
   return (
-    <div>
+    <>
       <Button onClick={handleOpen}>REGISTER</Button>
       <Modal
         open={open}
@@ -65,6 +69,20 @@ export default function Register() {
       
       >
         <Box sx={style}>
+          {loading ? (
+                  <div style={{
+                    position: 'absolute',
+                    left: '50%',
+                    top:'50%',
+                    transform: 'translateX(-50%)'}}>
+
+                    <PulseLoader
+
+                        size={40}
+                        color="#1C0E74"
+                    />
+                  </div>
+              ):
           <form onSubmit={handleSubmit(register_user)} >
           
 
@@ -125,10 +143,10 @@ export default function Register() {
             
             
  
-          </form>
+          </form>}
 
         </Box>
       </Modal>
-    </div>
+    </>
   );
 }

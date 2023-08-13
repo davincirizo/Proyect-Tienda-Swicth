@@ -1,10 +1,29 @@
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 
-export function show_alert(mensaje,icono){
+export function show_alert_succes(mensaje){
     const MySwal = withReactContent(Swal)
     MySwal.fire({
-        title:mensaje,
-        icon:icono
+        title:'Ok',
+        icon:'success',
+        text:mensaje
+    })
+}
+
+export function show_alert_warning(mensaje){
+    const MySwal = withReactContent(Swal)
+    MySwal.fire({
+        title:'Advertencia',
+        icon:'warning',
+        text:mensaje
+    })
+}
+
+export function show_alert_danger(mensaje){
+    const MySwal = withReactContent(Swal)
+    MySwal.fire({
+        title:'Error',
+        icon:'error',
+        text:mensaje
     })
 }

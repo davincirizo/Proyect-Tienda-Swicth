@@ -13,33 +13,62 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import SwipeableTemporaryDrawer from './Drewer';
 import Register from '../../auth/Register';
+import LoginUser from "../../auth/Login.jsx";
+import storage from "../../storage/Storage.jsx";
+import {useAuthContext} from "../../context/TokenContext.jsx";
+import {useNavigate} from "react-router-dom";
+import axios from "axios"
+import {show_alert_succes} from "../../general/notifications/ShowAlert.jsx";
+import {useState} from "react";
+import {PulseLoader} from "react-spinners";
 
 
 
 export default function NavBarUser() {
+  const {token} = useAuthContext()
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
-
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+
+  const navigate = useNavigate()
+  const url = import.meta.env.VITE_BACKEND_URL
+  const [loading, setLoading] = useState(false);
+
+  const logout = async()=>{
+    const token = storage.get('authToken')
+    const user = storage.get('authUser')
+    storage.remove('authToken');
+    storage.remove('authUser');
+    setLoading(true)
+    const res = await axios.post(`${url}/logout`,{
+      user:user
+    },{
+      headers:  {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    setLoading(false)
+    show_alert_succes(res.data.msg)
+
+
+    navigate('/')
+
+  }
 
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
-
   const handleMobileMenuClose = () => {
     setMobileMoreAnchorEl(null);
   };
-
   const handleMenuClose = () => {
     setAnchorEl(null);
     handleMobileMenuClose();
   };
-
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
-
   const menuId = 'primary-search-account-menu';
   const renderMenu = (
     <Menu
@@ -57,10 +86,11 @@ export default function NavBarUser() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem onClick={handleMenuClose}>Perfil</MenuItem>
+      <MenuItem onClick={logout}>Cerrar Sesion</MenuItem>
     </Menu>
   );
+
 
   const mobileMenuId = 'primary-search-account-menu-mobile';
   const renderMobileMenu = (
@@ -136,8 +166,10 @@ export default function NavBarUser() {
           >
            
           </Typography>
-          
+          {token?
+              <>
           <Box sx={{ flexGrow: 1 }} />
+
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
             <IconButton size="large" aria-label="show 4 new mails" color="inherit">
               <Badge badgeContent={4} color="error">
@@ -177,17 +209,40 @@ export default function NavBarUser() {
               <MoreIcon />
             </IconButton>
           </Box>
-          <Typography margin={'20px'}>
-             <Register/>
-           
-          </Typography>
+              </>
+            :
+              <>
+              <Typography
+                  position="absolute"
+                  top={'50'}
+                  right={20}>
+                <Register/>
+              </Typography>
+              <Typography
+                  position="absolute"
+                  top={'50'}
+                  right={110}>
+                <LoginUser/>
+              </Typography>
+              </>}
         </Toolbar>
       </AppBar>
       {renderMobileMenu}
       {renderMenu}
       </Box>
-    
-    
+      {loading &&
+          <div style={{
+            position: 'absolute',
+            left: '50%',
+            top:'50%',
+            transform: 'translateX(-50%)'}}>
+
+            <PulseLoader
+
+            size={40}
+            color="#1C0E74"
+        />
+      </div>}
     </>
     
   );

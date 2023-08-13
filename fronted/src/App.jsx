@@ -1,7 +1,9 @@
 import { BrowserRouter, Routes ,Route} from 'react-router-dom'
 import DashboardSaler from './saler/pages/DashboardSaler'
 import DashboardUser from './user/pages/DashboardUser'
-import Register from './auth/Register'
+import VerifyEmail from "./auth/VerifyEmail.jsx";
+
+
 
 
 function App() {
@@ -12,7 +14,8 @@ function App() {
       <BrowserRouter>
         <Routes>
         <Route path='/' element={<DashboardUser/>}/>
-        <Route path='/register' element={<Register/>}/>
+        <Route path='/verify/:id/:hash' element={<VerifyEmail/>}/>
+
 
         <Route path='/dashboardSaler' element={<DashboardSaler/>}/>
       </Routes>
