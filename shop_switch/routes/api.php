@@ -1,8 +1,9 @@
 <?php
 
+use App\Http\Controllers\admin\CategoryController;
+use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,6 +34,12 @@ Route::group(['middleware' => ['auth-verify-email']],function(){
     Route::post('login',[AuthController::class,'login']);
     Route::post('/forgot-password', [AuthController::class,'forgot_password']);
 });
+
+Route::get('admin/categories',[CategoryController::class,'index']);
+Route::post('admin/categories',[CategoryController::class,'store']);
+Route::put('admin/categories/{category}/',[CategoryController::class,'update']);
+Route::delete('admin/categories/{category}/',[CategoryController::class,'destroy']);
+Route::get('admin/categories/{category}/',[CategoryController::class,'show']);
 
 
 
