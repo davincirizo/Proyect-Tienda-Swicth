@@ -8,9 +8,12 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
 import MenuIcon from '@mui/icons-material/Menu';
+import DisplaySettingsIcon from '@mui/icons-material/DisplaySettings';
+import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
+import SettingsIcon from '@mui/icons-material/Settings';
+import { Link } from 'react-router-dom';
+
 export default function SwipeableTemporaryDrawer() {
   const [state, setState] = React.useState({
    left: false,
@@ -35,28 +38,27 @@ export default function SwipeableTemporaryDrawer() {
       onClick={toggleDrawer(anchor, false)}
       onKeyDown={toggleDrawer(anchor, false)}
     >
-      <List>
-        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
+      <ListItem>
+        <ListItemButton>
+          <SettingsIcon/>
+          <ListItemText primary='Ajustes de Admin' />
+        </ListItemButton>
+      </ListItem>
       <Divider />
       <List>
-        {['All mail', 'Trash', 'Spam'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
+        {[
+          {text:'Categorias',icon:<DisplaySettingsIcon />,route:'/saler/list_categories'},
+          {text:'Usuarios',icon:<PeopleAltIcon />,route:'/saler/list_users'}
+      ].map((item) => (
+          <ListItem key={item.text} disablePadding>
+            <Link to={item.route} style={{textDecoration: 'none'}}>
+              <ListItemButton>
+                <ListItemIcon>
+                {item.icon}
+                </ListItemIcon>
+                <ListItemText primary={item.text} />
+              </ListItemButton>
+            </Link>
           </ListItem>
         ))}
       </List>

@@ -15,7 +15,7 @@ class UserSeeder extends Seeder
     {
         $user_admin = User::create([
             'name'=>'Admin',
-            'email'=>'rizod3409gmail.com',
+            'email'=>'rizod3409@gmail.com',
             'password'=>'admin',
         ])->assignRole('Admin');
         $user_admin->markEmailAsVerified();

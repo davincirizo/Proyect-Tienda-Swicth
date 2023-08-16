@@ -56,8 +56,8 @@ export default function NavBarSaler() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem onClick={handleMenuClose}>Usuario</MenuItem>
+      <MenuItem onClick={handleMenuClose}>Cerrar Sesion</MenuItem>
     </Menu>
   );
 

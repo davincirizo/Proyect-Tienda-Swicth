@@ -16,7 +16,7 @@ import Register from '../../auth/Register';
 import LoginUser from "../../auth/Login.jsx";
 import storage from "../../storage/Storage.jsx";
 import {useAuthContext} from "../../context/TokenContext.jsx";
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import axios from "axios"
 import {show_alert_danger, show_alert_succes} from "../../general/notifications/ShowAlert.jsx";
 import {useState} from "react";
@@ -98,6 +98,9 @@ export default function NavBarUser() {
     >
       <MenuItem onClick={handleMenuClose}>Perfil</MenuItem>
       <MenuItem onClick={logout}>Cerrar Sesion</MenuItem>
+      <Link to='/saler/dashboardSaler'>
+        <MenuItem>Admin</MenuItem>
+      </Link>
     </Menu>
   );
 

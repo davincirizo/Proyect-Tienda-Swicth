@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "fronted"
+		},
+		{
+			"path": "../../additional_providers"
+		}
+	],
+	"settings": {}
+}
