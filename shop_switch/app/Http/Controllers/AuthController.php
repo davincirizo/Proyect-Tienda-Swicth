@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\PersonalAccessToken;
@@ -148,6 +149,79 @@ class AuthController extends Controller
         ],200);
 
     }
+
+    public function forgot_password(Request $request){
+        $rules = [
+            'email' => 'required|email'
+        ];
+        $validator = \Validator::make($request->input(),$rules);
+        if ($validator->fails()){
+            return response()->json([
+                'status' => false,
+                'errors' => $validator->errors(),
+            ],400);
+        }
+        $user_all = User::all();
+        $user = $user_all->where('email', '=', $request->email)->first();
+        if(!$user){
+            return response()->json([
+                'status' => false,
+                'msg' => 'Usuario no Encontrado',
+            ],404);
+        }
+
+        $user->sendEmailForgotPassword();
+
+        return response()->json([
+            'status' => true,
+            'msg' => 'Le enviamos el correo para que autentique su contrasenna',
+        ],200);
+
+    }
+
+
+    public function reset_password(Request $request,$token){
+        $rules = [
+            'password' => 'required',
+            'confirm_password' => 'required'
+        ];
+        $validator = \Validator::make($request->input(),$rules);
+        if ($validator->fails()){
+            return response()->json([
+                'status' => false,
+                'errors' => $validator->errors(),
+            ],400);
+        }
+        if($request->password != $request->confirm_password){
+            return response()->json([
+                'status' => false,
+                'confirm_password' => 'La contraseña debe coincidir',
+            ],400);
+        }
+
+        $search_reset = DB::table('password_reset_tokens')->where('token',$token)->first();
+        if(!$search_reset){
+            return response()->json([
+                'status' => false,
+                'msg' => 'Token No Valido',
+            ],404);
+        }
+        else{
+            $user_all = User::all();
+            $user = $user_all->where('email','=',$search_reset->email)->first();
+            $user->password = $request->password;
+            $user->save();
+            $search_delete = DB::table('password_reset_tokens')->where('token',$token)->delete();
+            return response()->json([
+                'status' => true,
+                'msg' => 'Contrasenna correactamente modificada',
+            ],200);
+
+        }
+
+
+    }
+
 
 
 

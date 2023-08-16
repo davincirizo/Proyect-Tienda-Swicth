@@ -18,9 +18,10 @@ import storage from "../../storage/Storage.jsx";
 import {useAuthContext} from "../../context/TokenContext.jsx";
 import {useNavigate} from "react-router-dom";
 import axios from "axios"
-import {show_alert_succes} from "../../general/notifications/ShowAlert.jsx";
+import {show_alert_danger, show_alert_succes} from "../../general/notifications/ShowAlert.jsx";
 import {useState} from "react";
 import {PulseLoader} from "react-spinners";
+import ForgotPasswordForm from "../../auth/ForgotPasswordForm.jsx";
 
 
 
@@ -37,21 +38,31 @@ export default function NavBarUser() {
 
   const logout = async()=>{
     const user = storage.get('authUser')
-    storage.remove('authToken');
-    storage.remove('authUser');
-    setLoading(true)
-    const res = await axios.post(`${url}/logout`,{
-      user:user
-    },{
-      headers:  {
-        'Authorization': `Bearer ${token}`
-      }
-    });
-    setLoading(false)
-    show_alert_succes(res.data.msg)
+    const token_id = storage.get('authToken')
+    try {
+      setLoading(true)
+      const res = await axios.post(`${url}/logout`, {
+        user: user
+      }, {
+        headers: {
+          'Authorization': `Bearer ${token_id}`
+        }
+      });
+      storage.remove('authToken');
+      storage.remove('authUser');
+      setLoading(false)
+      show_alert_succes(res.data.msg)
+      navigate('/')
+    }
+    catch (e){
+      setLoading(false)
+      show_alert_danger(e.response.data.message)
+      console.log(e.response.data.message)
+    }
 
 
-    navigate('/')
+
+
 
   }
 
@@ -165,7 +176,7 @@ export default function NavBarUser() {
           >
            
           </Typography>
-          {token?
+          {storage.get('authToken')?
               <>
           <Box sx={{ flexGrow: 1 }} />
 
@@ -223,6 +234,8 @@ export default function NavBarUser() {
                   right={110}>
                 <LoginUser/>
               </Typography>
+                <ForgotPasswordForm/>
+
               </>}
         </Toolbar>
       </AppBar>

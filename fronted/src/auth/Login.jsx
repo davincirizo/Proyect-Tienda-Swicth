@@ -12,6 +12,7 @@ import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import storage from "../storage/Storage.jsx";
 import {PulseLoader } from "react-spinners";
 import {useNavigate} from "react-router-dom";
+import ForgotPasswordForm from "./ForgotPasswordForm.jsx";
 
 
 
@@ -135,8 +136,13 @@ export default function LoginUser (){
                                 <span className='mr-3'><LoginIcon/></span>
                             </button>
                         </div>
+
                     </form>}
+                    <div  className='fixed-bottom text-center mb-3'>
+                        <ForgotPasswordForm/>
+                    </div>
                 </Box>
+
             </Modal>
     </>
     )

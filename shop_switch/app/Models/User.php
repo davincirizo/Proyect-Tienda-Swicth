@@ -16,6 +16,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
 
+
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -78,8 +79,9 @@ class User extends Authenticatable
         }
         else{
             $token = Str::random(64);
-            $search_reset->token = $token;
-            $search_reset->save();
+            DB::table('password_reset_tokens')
+                ->where('email', $search_reset->email)
+                ->update(['token' => $token]);
             $url_user = $fronted_url . '/reset-password/' . $token;
             $correo = new ForgotPassword($url_user);
             Mail::to($this->email)->send($correo);
