@@ -62,7 +62,7 @@ export default function ForgotPasswordForm (){
         }
         catch(e){
             setLoading(false)
-            if(e.response.status == 400) {
+                if(e.response.status == 400) {
                 setErrors(e.response.data.errors)
             }
             else {

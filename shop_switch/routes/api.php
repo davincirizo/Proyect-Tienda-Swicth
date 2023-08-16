@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\admin\CategoryController;
+use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -40,6 +41,11 @@ Route::post('admin/categories',[CategoryController::class,'store']);
 Route::put('admin/categories/{category}/',[CategoryController::class,'update']);
 Route::delete('admin/categories/{category}/',[CategoryController::class,'destroy']);
 Route::get('admin/categories/{category}/',[CategoryController::class,'show']);
+
+Route::get('admin/users',[UserController::class,'index']);
+Route::put('admin/users/{user}/',[UserController::class,'update']);
+Route::delete('admin/users/{user}/',[UserController::class,'destroy']);
+Route::get('admin/users/{user}/',[UserController::class,'show']);
 
 
 
