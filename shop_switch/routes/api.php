@@ -29,6 +29,15 @@ Route::post('verify_token',[AuthController::class,'verify_token']);
 
 Route::group(['middleware' => ['auth-user']],function(){
     Route::post('logout',[AuthController::class,'logout']);
+    Route::get('admin/categories',[CategoryController::class,'index'])->name('admin.categories.index');
+    Route::post('admin/categories',[CategoryController::class,'store'])->name('admin.categories.store');
+    Route::put('admin/categories/{category}/',[CategoryController::class,'update'])->name('admin.categories.update');
+    Route::delete('admin/categories/{category}/',[CategoryController::class,'destroy'])->name('admin.categories.destroy');
+
+    Route::get('admin/users',[UserController::class,'index'])->name('admin.users.index');
+    Route::put('admin/users/{user}/',[UserController::class,'update'])->name('admin.users.update');
+    Route::delete('admin/users/{user}/',[UserController::class,'destroy'])->name('admin.users.destroy');
+    Route::get('admin/users/{user}/',[UserController::class,'show'])->name('admin.users.show');
 });
 
 Route::group(['middleware' => ['auth-verify-email']],function(){
@@ -36,16 +45,10 @@ Route::group(['middleware' => ['auth-verify-email']],function(){
     Route::post('/forgot-password', [AuthController::class,'forgot_password']);
 });
 
-Route::get('admin/categories',[CategoryController::class,'index']);
-Route::post('admin/categories',[CategoryController::class,'store']);
-Route::put('admin/categories/{category}/',[CategoryController::class,'update']);
-Route::delete('admin/categories/{category}/',[CategoryController::class,'destroy']);
-Route::get('admin/categories/{category}/',[CategoryController::class,'show']);
 
-Route::get('admin/users',[UserController::class,'index']);
-Route::put('admin/users/{user}/',[UserController::class,'update']);
-Route::delete('admin/users/{user}/',[UserController::class,'destroy']);
-Route::get('admin/users/{user}/',[UserController::class,'show']);
+
+
+
 
 
 

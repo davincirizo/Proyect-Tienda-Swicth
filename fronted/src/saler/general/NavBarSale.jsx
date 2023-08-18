@@ -12,7 +12,7 @@ import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import SwipeableTemporaryDrawer from './Drewer';
-
+import './file.css'
 
 
 export default function NavBarSaler() {

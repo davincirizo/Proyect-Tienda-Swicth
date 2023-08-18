@@ -23,7 +23,7 @@ class AuthUser
         }
         else{
             return response()->json([
-                'message' => 'Inautorizado'
+                'msg' => 'Inautorizado'
             ], 401);
         }
     }

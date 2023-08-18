@@ -6,9 +6,6 @@ import ForgotPasswordSet from "./auth/ForgotPasswordSet.jsx";
 import ListCategories from './saler/pages/admin/categories/ListCategories';
 import ListUsers from './saler/pages/admin/users/ListUsers';
 
-
-
-
 function App() {
 
 

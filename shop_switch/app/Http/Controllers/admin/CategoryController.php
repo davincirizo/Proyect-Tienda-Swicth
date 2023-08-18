@@ -8,9 +8,20 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth-verify-role')->only('index','store','update','destroy');
+
+    }
+
     public function index(){
-        $categories = Category::all();
-        return response()->json($categories);
+        $categories = Category::paginate(10);
+        $totalPages = $categories->lastPage();
+        return response()->json([
+            'status' => true,
+            'categories' => $categories,
+            'pages'=>$totalPages
+        ],200);;
     }
 
     public function store(Request $request)
@@ -58,9 +69,6 @@ class CategoryController extends Controller
         }
     }
 
-    public function show(Category $category){
-        return response()->json($category);
-    }
 
     public function destroy(Category $category){
         $category->delete();

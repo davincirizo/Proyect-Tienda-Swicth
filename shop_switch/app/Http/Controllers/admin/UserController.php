@@ -8,9 +8,22 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth-verify-role')->only('index','update','destroy','show');
+
+    }
+
+
     public function index(){
-        $users = User::all();
-        return response()->json($users);
+        $users = User::paginate(10);
+        $totalPages = $users->lastPage();
+        return response()->json([
+            'status' => true,
+            'uers' => $users,
+            'pages'=>$totalPages
+        ],200);;
+
     }
 
     public function update(Request $request,User $user){
