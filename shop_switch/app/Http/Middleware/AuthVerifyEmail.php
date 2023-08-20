@@ -26,6 +26,11 @@ class AuthVerifyEmail
                     'msg' => 'Este usuario no esta confirmado'
                 ], 401);
             }
+            if(!$user->active){
+                return response()->json([
+                    'msg' => 'Este usuario esta temporalmente cerrado'
+                ], 401);
+            }
             else{
                 return $next($request);
             }

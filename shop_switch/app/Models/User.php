@@ -87,4 +87,8 @@ class User extends Authenticatable
             Mail::to($this->email)->send($correo);
         }
     }
+
+    public function get_users(){
+        return $this->roles = $this->roles;
+    }
 }

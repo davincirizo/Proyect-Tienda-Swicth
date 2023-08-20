@@ -1,0 +1,13 @@
+.contenedor {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+input {
+    width: 300px; /* ajusta el ancho según tus necesidades */
+    padding: 10px;
+    border-radius: 20px; /* ajusta el valor según tus necesidades */
+    padding: 10px;
+    border: 1px solid #ccc;
+}

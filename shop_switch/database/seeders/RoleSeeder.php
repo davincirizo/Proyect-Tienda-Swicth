@@ -26,5 +26,7 @@ class RoleSeeder extends Seeder
         Permission::create(['name' => 'admin.users.update','description'=>'Actualizar Usarios'])->syncRoles([$role_admin]);
         Permission::create(['name' => 'admin.users.destroy','description'=>'Eliminar Usarios'])->syncRoles([$role_admin]);
         Permission::create(['name' => 'admin.users.show','description'=>'Mostrar Usarios'])->syncRoles([$role_admin]);
+
+        Permission::create(['name' => 'admin.roles.index','description'=>'Mostrar Roles'])->syncRoles([$role_admin]);
     }
 }

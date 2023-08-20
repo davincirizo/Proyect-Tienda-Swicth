@@ -56,8 +56,7 @@ export default function NavBarUser() {
     }
     catch (e){
       setLoading(false)
-      show_alert_danger(e.response.data.message)
-      console.log(e.response.data.message)
+      show_alert_danger(e.response.data.msg)
     }
 
 

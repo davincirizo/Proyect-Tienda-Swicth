@@ -11,46 +11,56 @@ class UserController extends Controller
     public function __construct()
     {
         $this->middleware('auth-verify-role')->only('index','update','destroy','show');
-
     }
-
-
-    public function index(){
+    public function index(Request $request){
+        if($request->has('like')){
+            $users = User::where('email',$request->like)->paginate(10);
+        }
         $users = User::paginate(10);
         $totalPages = $users->lastPage();
+        for($i = 0; $i < count($users); $i++){
+            $users[$i]->get_users();
+        }
         return response()->json([
             'status' => true,
-            'uers' => $users,
+            'users' => $users,
             'pages'=>$totalPages
         ],200);;
 
     }
 
     public function update(Request $request,User $user){
-        $rules = [
-            'name' => 'required',
-            'email' => 'required'
-        ];
-        $validator = \Validator::make($request->input(),$rules);
-        if ($validator->fails()){
-            return response()->json([
-                'status' => false,
-                'errors' => $validator->errors(),
-            ],400);
-        }
-        if($user) {
-            $user->update($request->all());
+        if($request->has('active')){
+            if($request->active == 1){
+                $user->active = false;
+                $user->tokens()->delete();
+            }
+            else{
+                $user->active = true;
+            }
+            $user->save();
             return response()->json([
                 'res' => true,
                 'msg' => 'Usuario actualizado correctamente',
             ],200);
         }
-        else{
-            return response()->json([
-                'res' => true,
-                'msg' => 'Usuario no encontarda',
-            ],400);
+        if($request->has('roles')){
+            if(!$request->roles){
+                return response()->json([
+                    'res' => true,
+                    'msg' => 'Debe seleccionar al menos un rol',
+                ],400);
+            }
+            else{
+                $user->roles()->sync($request->roles);
+                return response()->json([
+                    'res' => true,
+                    'msg' => 'Usuario actualizado correctamente',
+                ],200);
+            }
+
         }
+
     }
 
     public function show(User $user){
@@ -64,4 +74,6 @@ class UserController extends Controller
             'msg' => 'Usuario eliminado correctamente',
         ],200);
     }
+
+
 }

@@ -108,7 +108,7 @@ export default function EditCategory (props){
 
                             <div className='input-group mt-3'>
                                 <span className='input-group-text'><DisplaySettingsIcon/></span>
-                                <input className='form-control bg-light text-dark'  placeholder='Nombre' type="text"  defaultValue="test"{...register('name')}/>
+                                <input className='form-control bg-light text-dark'  placeholder='Nombre' type="text"  defaultValue="test" {...register('name')}/>
                             </div>
                             {errors.name &&(
                                 <small className='fail'>

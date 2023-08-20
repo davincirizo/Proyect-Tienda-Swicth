@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\admin\UserController;
+use App\Http\Controllers\admin\RoleController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -38,6 +39,10 @@ Route::group(['middleware' => ['auth-user']],function(){
     Route::put('admin/users/{user}/',[UserController::class,'update'])->name('admin.users.update');
     Route::delete('admin/users/{user}/',[UserController::class,'destroy'])->name('admin.users.destroy');
     Route::get('admin/users/{user}/',[UserController::class,'show'])->name('admin.users.show');
+
+    Route::get('admin/roles',[RoleController::class,'index'])->name('admin.roles.index');
+
+
 });
 
 Route::group(['middleware' => ['auth-verify-email']],function(){
