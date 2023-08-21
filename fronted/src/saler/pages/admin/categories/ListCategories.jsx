@@ -1,7 +1,6 @@
 import { useState,useEffect } from 'react'
 import NavBarSaler from '../../../general/NavBarSale'
 import storage from '../../../../storage/Storage'
-import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import {show_alert_danger} from "../../../../general/notifications/ShowAlert.jsx";
 import { styled } from '@mui/material/styles';
@@ -20,7 +19,9 @@ import EditCategory from "./EditCategory.jsx";
 import {ToastContainer} from "react-toastify";
 import {notification_succes} from "../../../../general/notifications/NotificationTostify.jsx";
 import DeleteCategory from "./DeleteCategory.jsx";
-
+import {categoryApi} from "../../../../apis/QueryAxios.jsx";
+import TravelExploreIcon from "@mui/icons-material/TravelExplore.js";
+import '../../../../css/Searching.css'
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -47,11 +48,11 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 const styleContainer = {
-  position: 'absolute',
-  top: '90px',
-  left: '10%',
-  width: '80%',
-  borderRadius: '8px'
+    position: 'absolute',
+    top: '170px',
+    left: '10%',
+    width: '80%',
+    borderRadius: '8px'
 };
 
 const styleButtonFloat = {
@@ -60,30 +61,35 @@ const styleButtonFloat = {
 
 
 function ListCategories() {
-    const url = import.meta.env.VITE_BACKEND_URL
     const [categories,setCategories] = useState([])
+    const [categoriesFilter,setCategoriesFilter] = useState([])
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate()
-    const [page,setPage] = useState(1)
+    const [usersxPage,setusersxPage] = useState(10)
+    const [firstPage,setFirstPage] = useState(0)
+    const [lastPage,setLastPage] = useState(usersxPage)
     const [totalPages,setTotalPages] = useState(0)
+    const [page,setPage] = useState(1)
+    const[search,setSearch] = useState("")
 
     const enviarMessage = (msg) =>{
-      notification_succes(msg)
-      setPage(1)
+        notification_succes(msg)
+        setPage(1)
+        setSearch('')
     }
   const getAllCategory = async (value) =>{
     try
     {
       setLoading(true)
       const token = storage.get('authToken')
-      const response = await axios.get(`${url}/admin/categories?page=${value}`,{
+      const response = await categoryApi.get('/',{
         headers: {
           'Authorization': `Bearer ${token}`
-        }
-      })
+        }})
       setLoading(false)
-      setCategories(response.data.categories.data)
-      setTotalPages(response.data.pages)
+      setCategories(response.data)
+      setCategoriesFilter(response.data.slice(firstPage,lastPage))
+        setTotalPages(Math.ceil(response.data.length/usersxPage))
     }
     catch(e){
       setLoading(false)
@@ -92,10 +98,68 @@ function ListCategories() {
     }
 
   }
-  const handleChange = (event, value) => {
-    setPage(value);
-    getAllCategory(value)
+    const searcher =  (e) => {
+        setPage(1)
+        setSearch(e.target.value)
+        let change = e.target.value
+        update_page(e,'1',change)
+    }
+  const update_page = (event,value,change=search,user_x_page = usersxPage) => {
+      if(change) {
+          const filter = change
+          const categories_filtered = categories.filter((dato) =>
+              dato.name.toLowerCase().includes(filter.toLocaleLowerCase())
+          )
+          if(categories_filtered){
+              const pages_filtered = Math.ceil(categories_filtered.length/user_x_page)
+              setTotalPages(pages_filtered)
+          }
+          else {
+              setTotalPages(0)
+          }
+
+          if (value == 1) {
+              const first = 0
+              const second = value * user_x_page
+              setFirstPage(first)
+              setLastPage(second)
+              setCategoriesFilter(categories_filtered.slice(first, second))
+
+          } else {
+              const first = (value - 1) * user_x_page
+              const second = value * user_x_page
+              setFirstPage(first)
+              setLastPage(second)
+              setCategoriesFilter(categories_filtered.slice(first, second))
+          }
+      }
+      else {
+          if (value == 1) {
+              const first = 0
+              const second = value * user_x_page
+              setFirstPage(first)
+              setLastPage(second)
+              setCategoriesFilter(categories.slice(first, second))
+
+          } else {
+              const first = (value - 1) * user_x_page
+              const second = value * user_x_page
+              setFirstPage(first)
+              setLastPage(second)
+              setCategoriesFilter(categories.slice(first, second))
+          }
+          setTotalPages(Math.ceil(categories.length/user_x_page))
+
+      }
+      setPage(value)
   };
+    const update_user_xpage = (e) =>
+    {
+        setusersxPage(e.target.value)
+        const user_x_page = e.target.value
+        update_page(e,'1',search,user_x_page)
+
+    }
 
     useEffect (() =>{
       getAllCategory()
@@ -106,6 +170,17 @@ function ListCategories() {
   return (
     <div>
         <NavBarSaler/>
+        <Typography sx={{
+            top: '90px',
+            position: 'absolute',
+            left: '10%',
+            width: '80%',}} >
+            <div className='contenedor'>
+                <input type='text' placeholder='Buscar Categoria' onChange={searcher} value={search} />
+                <TravelExploreIcon className="icon" />
+            </div>
+
+        </Typography>
       {loading ? (
               <div style={{
                 position: 'absolute',
@@ -131,7 +206,7 @@ function ListCategories() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {categories.map((category) => (
+              {categoriesFilter.map((category) => (
                   <StyledTableRow key={category.id}>
                     <StyledTableCell component="th" scope="row">
                       {category.id}
@@ -160,8 +235,13 @@ function ListCategories() {
               ))}
             </TableBody>
             <Stack spacing={2}>
+                <Typography>
+                    <div >
+                        <input style={{width:'70px'}} className='input-group-text' type='number' value={usersxPage} onChange={update_user_xpage}/>
+                    </div>
+                </Typography>
               <Typography>Page: {page}</Typography>
-              <Pagination variant="outlined" count={totalPages} page={page} onChange={handleChange} />
+              <Pagination variant="outlined" count={totalPages} page={page} onChange={update_page} />
             </Stack>
             <Box sx={styleButtonFloat}>
               <CreateCategory

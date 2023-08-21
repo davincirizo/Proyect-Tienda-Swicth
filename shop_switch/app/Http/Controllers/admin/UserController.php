@@ -13,19 +13,11 @@ class UserController extends Controller
         $this->middleware('auth-verify-role')->only('index','update','destroy','show');
     }
     public function index(Request $request){
-        if($request->has('like')){
-            $users = User::where('email',$request->like)->paginate(10);
-        }
-        $users = User::paginate(10);
-        $totalPages = $users->lastPage();
+        $users = User::all();
         for($i = 0; $i < count($users); $i++){
             $users[$i]->get_users();
         }
-        return response()->json([
-            'status' => true,
-            'users' => $users,
-            'pages'=>$totalPages
-        ],200);;
+        return response()->json($users, 200);;
 
     }
 

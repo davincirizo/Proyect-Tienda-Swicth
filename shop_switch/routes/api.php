@@ -3,6 +3,7 @@
 use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\admin\RoleController;
+use App\Http\Controllers\admin\PermissionsController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -41,6 +42,12 @@ Route::group(['middleware' => ['auth-user']],function(){
     Route::get('admin/users/{user}/',[UserController::class,'show'])->name('admin.users.show');
 
     Route::get('admin/roles',[RoleController::class,'index'])->name('admin.roles.index');
+    Route::get('admin/roles/{role}',[RoleController::class,'show'])->name('admin.roles.show');
+    Route::put('admin/roles/{role}',[RoleController::class,'update'])->name('admin.roles.update');
+    Route::post('admin/roles',[RoleController::class,'create'])->name('admin.roles.create');
+    Route::delete('admin/roles/{role}',[RoleController::class,'destroy'])->name('admin.roles.destroy');
+
+    Route::get('admin/permissions',[PermissionsController::class,'index'])->name('admin.permissions.index');
 
 
 });

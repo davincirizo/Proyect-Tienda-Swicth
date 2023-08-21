@@ -21,7 +21,7 @@ import TravelExploreIcon from '@mui/icons-material/TravelExplore';
 import {notification_succes} from "../../../../general/notifications/NotificationTostify.jsx";
 import ActiveUser from "./ActiveUser.jsx";
 import EditUser from "./Edituser.jsx";
-import './Searching.css'
+import '../../../../css/Searching.css'
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -63,27 +63,37 @@ const styleButtonFloat = {
 function ListUsers() {
   const url = import.meta.env.VITE_BACKEND_URL
   const [users,setUser] = useState([])
+  const [userFilter,setUserFilter] = useState([])
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate()
-  const [page,setPage] = useState(1)
+  const [usersxPage,setusersxPage] = useState(10)
+  const [firstPage,setFirstPage] = useState(0)
+  const [lastPage,setLastPage] = useState(usersxPage)
   const [totalPages,setTotalPages] = useState(0)
+  const [page,setPage] = useState(1)
+  const[search,setSearch] = useState("")
+
+
   const enviarMessage = (msg) =>{
     notification_succes(msg)
-    setPage(1)
+    setSearch('')
   }
-  const getAllUser = async (value) =>{
+  const getAllUser = async () =>{
     try
     {
       setLoading(true)
       const token = storage.get('authToken')
-      const response = await axios.get(`${url}/admin/users?page=${value}`,{
+      const response = await axios.get(`${url}/admin/users`,{
         headers: {
           'Authorization': `Bearer ${token}`
         }
       })
       setLoading(false)
-      setUser(response.data.users.data)
-      setTotalPages(response.data.pages)
+      setUser(response.data)
+      setUserFilter(response.data.slice(firstPage,lastPage))
+      setTotalPages(Math.ceil(response.data.length/usersxPage))
+
+
     }
     catch(e){
       setLoading(false)
@@ -95,12 +105,70 @@ function ListUsers() {
   useEffect (() =>{
     getAllUser()
   },[])
-  const handleChange = (event, value) => {
-    setPage(value);
-    getAllUser(value)
+
+  const update_page = async (event,value,change=search,user_x_page = usersxPage) => {
+    if(change) {
+      const filter = change
+      const user_filtered = users.filter((dato) =>
+          dato.name.toLowerCase().includes(filter.toLocaleLowerCase())
+      )
+        if(user_filtered){
+          const pages_filtered = Math.ceil(user_filtered.length/user_x_page)
+          setTotalPages(pages_filtered)
+        }
+        else {
+          setTotalPages(0)
+        }
+
+        if (value == 1) {
+          const first = 0
+          const second = value * user_x_page
+          setFirstPage(first)
+          setLastPage(second)
+          setUserFilter(user_filtered.slice(first, second))
+
+        } else {
+          const first = (value - 1) * user_x_page
+          const second = value * user_x_page
+          setFirstPage(first)
+          setLastPage(second)
+          setUserFilter(user_filtered.slice(first, second))
+        }
+    }
+    else {
+      if (value == 1) {
+        const first = 0
+        const second = value * user_x_page
+        setFirstPage(first)
+        setLastPage(second)
+        setUserFilter(users.slice(first, second))
+
+      } else {
+        const first = (value - 1) * user_x_page
+        const second = value * user_x_page
+        setFirstPage(first)
+        setLastPage(second)
+        setUserFilter(users.slice(first, second))
+      }
+      setTotalPages(Math.ceil(users.length/user_x_page))
+
+    }
+    setPage(value)
   };
 
-  const searcher =  async (e) => {
+
+  const searcher =  (e) => {
+    setPage(1)
+    setSearch(e.target.value)
+    let change = e.target.value
+    update_page(e,'1',change)
+  }
+
+  const update_user_xpage = (e) =>
+  {
+    setusersxPage(e.target.value)
+    const user_x_page = e.target.value
+    update_page(e,'1',search,user_x_page)
 
   }
 
@@ -113,9 +181,10 @@ function ListUsers() {
         left: '10%',
         width: '80%',}} >
         <div className='contenedor'>
-          <input type='text' onChange={searcher} />
+          <input type='text' placeholder='Buscar Usuario' onChange={searcher} value={search} />
           <TravelExploreIcon className="icon" />
         </div>
+
       </Typography>
 
       {loading ? (
@@ -146,7 +215,7 @@ function ListUsers() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {users.map((user) => (
+              {userFilter.map((user) => (
                   <StyledTableRow key={user.id}>
                     <StyledTableCell component="th" scope="row">
                       {user.id}
@@ -189,8 +258,13 @@ function ListUsers() {
               ))}
             </TableBody>
             <Stack spacing={2}>
-              <Typography>Page: {page}</Typography>
-              <Pagination variant="outlined" count={totalPages} page={page} onChange={handleChange} />
+              <Typography>
+                <div >
+                  <input style={{width:'70px'}} className='input-group-text' type='number' value={usersxPage} onChange={update_user_xpage}/>
+                </div>
+              </Typography>
+              <Pagination variant="outlined" count={totalPages} onChange={update_page} page={page}/>
+              {/*page={page} onChange={handleChange}*/}
             </Stack>
             <Box sx={styleButtonFloat}>
               {/*<CreateCategory*/}
@@ -200,6 +274,7 @@ function ListUsers() {
 
           </Table>}
       <ToastContainer/>
+
     </>
   )
 }

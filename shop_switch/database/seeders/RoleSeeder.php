@@ -17,16 +17,22 @@ class RoleSeeder extends Seeder
         $role_saler = Role::create(['name' => 'Saler']);
         $role_user = Role::create(['name' => 'User']);
 
-        Permission::create(['name' => 'admin.categories.index','description'=>'Listar Categorias'])->syncRoles([$role_admin,$role_saler]);
-        Permission::create(['name' => 'admin.categories.store','description'=>'Guardar Categorias'])->syncRoles([$role_admin]);
-        Permission::create(['name' => 'admin.categories.update','description'=>'Actualizar Categorias'])->syncRoles([$role_admin]);
-        Permission::create(['name' => 'admin.categories.destroy','description'=>'Eliminar Categorias'])->syncRoles([$role_admin]);
+        Permission::create(['name' => 'admin.categories.index','description'=>'Listar Categorias','models'=>'Categorias de Producto'])->syncRoles([$role_admin,$role_saler]);
+        Permission::create(['name' => 'admin.categories.store','description'=>'Guardar Categorias','models'=>'Categorias de Producto'])->syncRoles([$role_admin]);
+        Permission::create(['name' => 'admin.categories.update','description'=>'Actualizar Categorias','models'=>'Categorias de Producto'])->syncRoles([$role_admin]);
+        Permission::create(['name' => 'admin.categories.destroy','description'=>'Eliminar Categorias','models'=>'Categorias de Producto'])->syncRoles([$role_admin]);
 
-        Permission::create(['name' => 'admin.users.index','description'=>'Listar Usarios'])->syncRoles([$role_admin]);
-        Permission::create(['name' => 'admin.users.update','description'=>'Actualizar Usarios'])->syncRoles([$role_admin]);
-        Permission::create(['name' => 'admin.users.destroy','description'=>'Eliminar Usarios'])->syncRoles([$role_admin]);
-        Permission::create(['name' => 'admin.users.show','description'=>'Mostrar Usarios'])->syncRoles([$role_admin]);
+        Permission::create(['name' => 'admin.users.index','description'=>'Listar Usarios','models'=>'Usuarios'])->syncRoles([$role_admin]);
+        Permission::create(['name' => 'admin.users.update','description'=>'Actualizar Usarios','models'=>'Usuarios'])->syncRoles([$role_admin]);
+        Permission::create(['name' => 'admin.users.destroy','description'=>'Eliminar Usarios','models'=>'Usuarios'])->syncRoles([$role_admin]);
+        Permission::create(['name' => 'admin.users.show','description'=>'Mostrar Usarios','models'=>'Usuarios'])->syncRoles([$role_admin]);
 
-        Permission::create(['name' => 'admin.roles.index','description'=>'Mostrar Roles'])->syncRoles([$role_admin]);
+        Permission::create(['name' => 'admin.roles.index','description'=>'Listar Roles','models'=>'Roles'])->syncRoles([$role_admin]);
+        Permission::create(['name' => 'admin.roles.show','description'=>'Mostrar Rol','models'=>'Roles'])->syncRoles([$role_admin]);
+        Permission::create(['name' => 'admin.roles.create','description'=>'Crear Rol','models'=>'Roles'])->syncRoles([$role_admin]);
+        Permission::create(['name' => 'admin.roles.update','description'=>'Editar Rol','models'=>'Roles'])->syncRoles([$role_admin]);
+        Permission::create(['name' => 'admin.roles.destroy','description'=>'Eliminar Rol','models'=>'Roles'])->syncRoles([$role_admin]);
+
+        Permission::create(['name' => 'admin.permissions.index','description'=>'Obtener Permisos','models'=>'Permisos'])->syncRoles([$role_admin]);
     }
 }

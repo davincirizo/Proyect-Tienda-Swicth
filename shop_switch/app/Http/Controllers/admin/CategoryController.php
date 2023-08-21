@@ -15,13 +15,8 @@ class CategoryController extends Controller
     }
 
     public function index(){
-        $categories = Category::paginate(10);
-        $totalPages = $categories->lastPage();
-        return response()->json([
-            'status' => true,
-            'categories' => $categories,
-            'pages'=>$totalPages
-        ],200);;
+        $categories = Category::all();
+        return response()->json($categories,200);;
     }
 
     public function store(Request $request)

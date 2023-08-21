@@ -11,6 +11,7 @@ import DisplaySettingsIcon from '@mui/icons-material/DisplaySettings';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import storage from "../../../../storage/Storage.jsx";
 import {show_alert_danger} from "../../../../general/notifications/ShowAlert.jsx";
+import {categoryApi} from "../../../../apis/QueryAxios.jsx";
 
 
 
@@ -45,32 +46,33 @@ export default function CreateCategory (props){
     const create_category = async (data) =>{
         const token = storage.get('authToken')
         setErrors([])
-        try{
+        // try{
             setLoading(true)
-            const res = await axios.post(`${url}/admin/categories`,{
-                    name:data.name,
+            const res = categoryApi.post('',{
+                name:data.name,
             },{
                 headers: {
                     'Authorization': `Bearer ${token}`
-                }
-                }
-            )
-            setLoading(false)
-            setOpen(false)
-            getAllCategory()
-            enviarMessage(res.data.msg)
-        }
-        catch(e){
-            setLoading(false)
-            if(e.response.status == 400) {
-                setErrors(e.response.data.errors)
-            }
-            else {
+                }})
+            res.then((data) => {
+                setLoading(false)
                 setOpen(false)
-                show_alert_danger(e.response.data.msg)
-            }
+                getAllCategory()
+                enviarMessage(data.data.msg)
+                console.log(data)
+            })
+                .catch(error => {
+                    setLoading(false)
+                    if(error.response.status == 400) {
+                        setErrors(error.response.data.errors)
+                    }
+                    else {
+                        setOpen(false)
+                        show_alert_danger(error.response.data.msg)
+                    }
+                })
         }
-    }
+
 
 
 
