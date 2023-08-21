@@ -13,6 +13,7 @@ import DisplaySettingsIcon from '@mui/icons-material/DisplaySettings';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { Link } from 'react-router-dom';
+import SupervisedUserCircleIcon from '@mui/icons-material/SupervisedUserCircle';
 
 export default function SwipeableTemporaryDrawer() {
   const [state, setState] = React.useState({
@@ -48,7 +49,9 @@ export default function SwipeableTemporaryDrawer() {
       <List>
         {[
           {text:'Categorias',icon:<DisplaySettingsIcon />,route:'/saler/list_categories'},
-          {text:'Usuarios',icon:<PeopleAltIcon />,route:'/saler/list_users'}
+          {text:'Usuarios',icon:<PeopleAltIcon />,route:'/saler/list_users'},
+          {text:'Roles',icon:<SupervisedUserCircleIcon />,route:'/saler/list_roles'}
+
       ].map((item) => (
           <ListItem key={item.text} disablePadding>
             <Link to={item.route} style={{textDecoration: 'none'}}>

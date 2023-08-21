@@ -2,7 +2,6 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { useForm } from "react-hook-form"
-import axios from "axios"
 import {useEffect, useState} from 'react';
 import {PulseLoader } from "react-spinners";
 import DisplaySettingsIcon from '@mui/icons-material/DisplaySettings';
@@ -10,6 +9,7 @@ import storage from "../../../../storage/Storage.jsx";
 import {show_alert_danger} from "../../../../general/notifications/ShowAlert.jsx";
 import EditIcon from '@mui/icons-material/Edit';
 import EditCalendarRoundedIcon from '@mui/icons-material/EditCalendarRounded';
+import { categoryApi } from '../../../../apis/QueryAxios.jsx';
 
 
 
@@ -52,14 +52,12 @@ export default function EditCategory (props){
         setErrors([])
         try{
             setLoading(true)
-            const res = await axios.put(`${url}/admin/categories/${category.id}`,{
-                    name:data.name,
-                },{
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                }
-            )
+            const res = await categoryApi.put(`/${category.id}`,{
+                name:data.name,
+            },{
+                headers: {
+                        'Authorization': `Bearer ${token}` }
+            })
             setLoading(false)
             setOpen(false)
             getAllCategory()

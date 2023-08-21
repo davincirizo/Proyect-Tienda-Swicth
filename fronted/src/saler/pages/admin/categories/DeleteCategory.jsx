@@ -1,15 +1,14 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
-import { useForm } from "react-hook-form"
-import axios from "axios"
-import {useEffect, useState} from 'react';
 import {PulseLoader } from "react-spinners";
-import DisplaySettingsIcon from '@mui/icons-material/DisplaySettings';
 import storage from "../../../../storage/Storage.jsx";
 import {show_alert_danger} from "../../../../general/notifications/ShowAlert.jsx";
 import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
 import Button from "@mui/material/Button";
+import { categoryApi } from '../../../../apis/QueryAxios.jsx';
+import { useState } from 'react';
+
 
 
 
@@ -39,26 +38,17 @@ export default function DeleteCategory (props){
     const handleOpen = () => setOpen(true);
     const handleClose = () => {
         setOpen(false)
-        setErrors([])
     }
-    const [errors,setErrors] = useState([]);
-    const url = import.meta.env.VITE_BACKEND_URL
-    const { register, handleSubmit,setValue } = useForm()
-    useEffect (() =>{
-        setValue("name",category.name)
-    },[])
 
-    const delete_category = async (data) =>{
+    const delete_category = async () =>{
         const token = storage.get('authToken')
-        setErrors([])
         try{
             setLoading(true)
-            const res = await axios.delete(`${url}/admin/categories/${category.id}`,{
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
+            const res = await categoryApi.delete(`/${category.id}`,{
+                headers: {
+                    'Authorization': `Bearer ${token}`
                 }
-            )
+            })
             setLoading(false)
             setOpen(false)
             getAllCategory()
@@ -66,13 +56,9 @@ export default function DeleteCategory (props){
         }
         catch(e){
             setLoading(false)
-            if(e.response.status == 400) {
-                setErrors(e.response.data.errors)
-            }
-            else {
-                setOpen(false)
-                show_alert_danger(e.response.data.msg)
-            }
+            setOpen(false)
+            show_alert_danger(e.response.data.msg)
+     
         }
     }
 

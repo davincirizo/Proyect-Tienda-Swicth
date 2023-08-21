@@ -1,7 +1,6 @@
 import { useState,useEffect } from 'react'
 import NavBarSaler from '../../../general/NavBarSale'
 import storage from '../../../../storage/Storage'
-import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import {show_alert_danger} from "../../../../general/notifications/ShowAlert.jsx";
 import { styled } from '@mui/material/styles';
@@ -22,6 +21,7 @@ import {notification_succes} from "../../../../general/notifications/Notificatio
 import ActiveUser from "./ActiveUser.jsx";
 import EditUser from "./Edituser.jsx";
 import '../../../../css/Searching.css'
+import { usersApi } from '../../../../apis/QueryAxios'
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -61,7 +61,6 @@ const styleButtonFloat = {
 
 
 function ListUsers() {
-  const url = import.meta.env.VITE_BACKEND_URL
   const [users,setUser] = useState([])
   const [userFilter,setUserFilter] = useState([])
   const [loading, setLoading] = useState(false);
@@ -83,7 +82,7 @@ function ListUsers() {
     {
       setLoading(true)
       const token = storage.get('authToken')
-      const response = await axios.get(`${url}/admin/users`,{
+      const response = await usersApi.get('',{
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -264,13 +263,8 @@ function ListUsers() {
                 </div>
               </Typography>
               <Pagination variant="outlined" count={totalPages} onChange={update_page} page={page}/>
-              {/*page={page} onChange={handleChange}*/}
             </Stack>
-            <Box sx={styleButtonFloat}>
-              {/*<CreateCategory*/}
-              {/*    getAllCategory={getAllCategory}*/}
-              {/*    enviarMessage={enviarMessage}/>*/}
-            </Box>
+           
 
           </Table>}
       <ToastContainer/>

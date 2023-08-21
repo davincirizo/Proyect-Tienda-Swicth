@@ -12,6 +12,7 @@ import Checkbox from '@mui/material/Checkbox';
 import SaveIcon from '@mui/icons-material/Save';
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
+import { usersApi } from '../../../../apis/QueryAxios.jsx';
 
 
 const style = {
@@ -58,14 +59,13 @@ export default function EditUser (props) {
         const token = storage.get('authToken')
         try {
             setLoading(true)
-            const res = await axios.put(`${url}/admin/users/${user.id}`, {
+            const res = await usersApi.put(`/${user.id}`,{
                 roles: role_select,
-                }, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                }
-            )
+            },{
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                } 
+            })
             setLoading(false)
             setOpen(false)
             getAllUser()
