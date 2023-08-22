@@ -22,6 +22,7 @@ import DeleteCategory from "./DeleteCategory.jsx";
 import {categoryApi} from "../../../../apis/QueryAxios.jsx";
 import TravelExploreIcon from "@mui/icons-material/TravelExplore.js";
 import '../../../../css/Searching.css'
+import NotFound from '../../../../general/NotFound';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -195,7 +196,8 @@ function ListCategories() {
                 />
               </div>
           ):
-
+          <>
+          {categoriesFilter.length !=0 ?(
           <Table sx={styleContainer}>
             <TableHead>
               <TableRow>
@@ -233,6 +235,8 @@ function ListCategories() {
 
                   </StyledTableRow>
               ))}
+           
+
             </TableBody>
             <Stack spacing={2}>
                 <Typography>
@@ -249,7 +253,12 @@ function ListCategories() {
                   enviarMessage={enviarMessage}/>
             </Box>
 
-          </Table>}
+          </Table>):
+          <div className='buscador_px'>
+            <NotFound/>
+            </div>}      
+
+          </>}
       <ToastContainer/>
 
     </div>

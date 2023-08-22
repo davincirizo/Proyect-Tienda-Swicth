@@ -16,6 +16,7 @@ import {PulseLoader} from "react-spinners";
 import List from '@mui/material/List';
 import ListSubheader from '@mui/material/ListSubheader';
 import TravelExploreIcon from "@mui/icons-material/TravelExplore.js";
+import NotFound from '../../../../general/NotFound.jsx';
 
 
 const style = {
@@ -229,8 +230,8 @@ function EditRole(props) {
                               </li>
                           ))}
                       </List>):
-                      <div>
-                          No Found
+                      <div className='buscador_px'>
+                          <NotFound/>
                       </div>}
 
                       {errors.permissions &&(
