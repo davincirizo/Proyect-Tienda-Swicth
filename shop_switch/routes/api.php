@@ -5,6 +5,7 @@ use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\admin\RoleController;
 use App\Http\Controllers\admin\PermissionsController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Admin\LabelController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -48,6 +49,13 @@ Route::group(['middleware' => ['auth-user']],function(){
     Route::delete('admin/roles/{role}',[RoleController::class,'destroy'])->name('admin.roles.destroy');
 
     Route::get('admin/permissions',[PermissionsController::class,'index'])->name('admin.permissions.index');
+
+    Route::get('admin/labels',[LabelController::class,'index'])->name('admin.labels.index');
+    Route::get('admin/labels/{role}',[LabelController::class,'show'])->name('admin.labels.show');
+    Route::put('admin/labels/{role}',[LabelController::class,'update'])->name('admin.labels.update');
+    Route::post('admin/labels',[LabelController::class,'create'])->name('admin.labels.create');
+    Route::delete('admin/labels/{role}',[LabelController::class,'destroy'])->name('admin.labels.destroy');
+
 
 
 });
