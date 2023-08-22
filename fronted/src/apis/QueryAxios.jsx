@@ -13,3 +13,6 @@ export const usersApi = axios.create({
 export const roleApi = axios.create({
     baseURL:`${backend}/admin/roles`
 })
+export const permissionsApi = axios.create({
+    baseURL:`${backend}/admin/permissions`
+})

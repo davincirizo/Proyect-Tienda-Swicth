@@ -20,6 +20,10 @@ import TravelExploreIcon from '@mui/icons-material/TravelExplore';
 import {notification_succes} from "../../../../general/notifications/NotificationTostify.jsx";
 import '../../../../css/Searching.css'
 import { roleApi } from '../../../../apis/QueryAxios'
+import EditRole from "./EditRole.jsx";
+import CreateCategory from "../categories/CraeteCategory.jsx";
+import CreateRole from "./CreateRole.jsx";
+import DeleteRole from "./DeleteRole.jsx";
 
 
 
@@ -159,6 +163,11 @@ function ListRoles() {
         update_page(e,'1',change)
       }
 
+    const enviarMessage = (msg) =>{
+      notification_succes(msg)
+      setSearch('')
+    }
+
       useEffect (() =>{
         getAllRoles()
       },[])
@@ -196,6 +205,7 @@ function ListRoles() {
               <TableRow>
                 <StyledTableCell>ID</StyledTableCell>
                 <StyledTableCell align="center">Nombre</StyledTableCell>
+                <StyledTableCell align="center"></StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -206,6 +216,24 @@ function ListRoles() {
                     </StyledTableCell>
                     <StyledTableCell align="center" component="th" scope="row">
                       {role.name}
+                    </StyledTableCell>
+                    <StyledTableCell align="center" component="th" scope="row">
+                        <Box display="flex">
+                            <Box sx={{ paddingLeft: 10 }}>
+                                <EditRole
+                                role={role}
+                                getAllRoles={getAllRoles}
+                                enviarMessage={enviarMessage}
+                                />
+                            </Box>
+                            <Box sx={{ paddingLeft: 10 }}>
+                            <DeleteRole
+                                role={role}
+                                getAllRoles={getAllRoles}
+                                enviarMessage={enviarMessage}
+                            />
+                            </Box>
+                        </Box>
                     </StyledTableCell>
                   </StyledTableRow>
               ))}
@@ -218,6 +246,11 @@ function ListRoles() {
               </Typography>
               <Pagination variant="outlined" count={totalPages} onChange={update_page} page={page}/>
             </Stack>
+              <Box sx={styleButtonFloat}>
+                  <CreateRole
+                      getAllRoles={getAllRoles}
+                      enviarMessage={enviarMessage}/>
+              </Box>
           </Table>}
       <ToastContainer/>
     </>

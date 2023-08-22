@@ -67,7 +67,7 @@ export default function EditUser (props) {
                 } 
             })
             setLoading(false)
-            setOpen(false)
+            handleClose()
             getAllUser()
             enviarMessage(res.data.msg)
 

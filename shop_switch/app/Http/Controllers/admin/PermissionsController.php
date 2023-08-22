@@ -9,6 +9,11 @@ class PermissionsController extends Controller
 {
     public function index(){
         $permission = Permission::all();
-        return response()->json($permission,200);
+        $models = $permission->pluck('models')->toArray();
+        $uniqueModels = collect($models)->unique()->values()->all();
+        return response()->json([
+            'permission' =>  $permission,
+            'models'=>$uniqueModels
+            ],200);
     }
 }

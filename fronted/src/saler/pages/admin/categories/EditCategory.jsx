@@ -41,7 +41,6 @@ export default function EditCategory (props){
         setErrors([])
     }
     const [errors,setErrors] = useState([]);
-    const url = import.meta.env.VITE_BACKEND_URL
     const { register, handleSubmit,setValue } = useForm()
     useEffect (() =>{
         setValue("name",category.name)

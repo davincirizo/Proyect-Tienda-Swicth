@@ -6,11 +6,12 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use App\Models\RoleInherit;
 
 class RoleController extends Controller
 {
     public function index(){
-        $roles = Role::all();
+        $roles = RoleInherit::getPermissions();
         return response()->json($roles,200);
     }
 
@@ -26,7 +27,7 @@ class RoleController extends Controller
     public function create(Request $request ){
         $rules = [
             'name' => 'required',
-            'roles'=> 'required',
+            'permissions'=> 'required',
         ];
         $validator = \Validator::make($request->input(),$rules);
         if ($validator->fails()){
@@ -36,7 +37,7 @@ class RoleController extends Controller
             ],400);
         }
         $role = Role::create(['name' => $request->name]);
-        $role->syncPermissions($request->roles);
+        $role->syncPermissions($request->permissions);
 
         return response()->json([
             'status' => true,
@@ -48,7 +49,7 @@ class RoleController extends Controller
     public function update(Role $role,Request $request){
         $rules = [
             'name' => 'required',
-            'roles'=> 'required',
+            'permissions'=> 'required',
         ];
         $validator = \Validator::make($request->input(),$rules);
         if ($validator->fails()){
@@ -58,7 +59,7 @@ class RoleController extends Controller
             ],400);
         }
         $role->update($request->all());
-        $role->syncPermissions($request->roles);
+        $role->syncPermissions($request->permissions);
 
         return response()->json([
             'status' => true,
