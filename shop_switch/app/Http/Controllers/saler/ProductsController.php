@@ -1,0 +1,82 @@
+<?php
+
+namespace App\Http\Controllers\saler;
+
+use App\Http\Controllers\Controller;
+use App\Models\Product;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Laravel\Sanctum\PersonalAccessToken;
+
+
+class ProductsController extends Controller
+{
+    public function index(){
+        $products = Product::getProducts();
+        return response()->json($products,200);;
+    }
+
+    public function show(Product $product){
+        $product->category;
+        $product->labels;
+        return response()->json($product,200);;
+    }
+
+    public function store(Request $request)
+    {
+        $rules = [
+            'name' => 'required',
+            'category_id' => 'required',
+            'price' => 'required',
+            'quantity' => 'required',
+        ];
+        $validator = \Validator::make($request->input(),$rules);
+        if ($validator->fails()){
+            return response()->json([
+                'status' => false,
+                'errors' => $validator->errors(),
+            ],400);
+        }
+        $token = $request->bearerToken();
+        $access = PersonalAccessToken::findToken($token);
+        $user = User::where('email', '=', $access->name)->first();
+
+        $product = new Product;
+        $product->name = $request->name;
+        $product->price = $request->price;
+        $product->quantity = $request->quantity;
+        $product->category_id = $request->category_id;
+        $product->created_user = $user->id;
+        $product->save();
+        $product->labels()->sync($request->labels);
+        return response()->json([
+            'res' => true,
+            'msg' => 'Producto creado correctamente',
+        ],200);
+    }
+
+    public function update(Request $request,Product $product){
+        $rules = [
+            'name' => 'required',
+            'category_id' => 'required',
+            'price' => 'required',
+            'quantity' => 'required',
+        ];
+        $validator = \Validator::make($request->input(),$rules);
+        if ($validator->fails()){
+            return response()->json([
+                'status' => false,
+                'errors' => $validator->errors(),
+            ],400);
+        }
+        
+    }
+
+    public function destroy(Category $category){
+        $category->delete();
+        return response()->json([
+            'res' => true,
+            'msg' => 'Categoria eliminada correctamente',
+        ],200);
+    }
+}

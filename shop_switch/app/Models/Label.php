@@ -13,6 +13,10 @@ class Label extends Model
     public function category(){
         return $this->belongsTo('App\Models\Category');
     }
+    public function products(){
+        $this->belongsToMany('App\Models\Product');
+    }
+
     public static function getAllLabels(){
         $labels = Label::all();
         for($i = 0; $i < count($labels); $i++) {

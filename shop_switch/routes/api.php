@@ -8,6 +8,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin\LabelController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\saler\ProductsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -55,6 +56,12 @@ Route::group(['middleware' => ['auth-user']],function(){
     Route::put('admin/labels/{label}',[LabelController::class,'update'])->name('admin.labels.update');
     Route::post('admin/labels',[LabelController::class,'store'])->name('admin.labels.create');
     Route::delete('admin/labels/{label}',[LabelController::class,'destroy'])->name('admin.labels.destroy');
+
+    Route::get('saler/products',[ProductsController::class,'index'])->name('saler.products.index');
+    Route::get('saler/products/{product}',[ProductsController::class,'show'])->name('saler.products.show');
+    Route::put('saler/products/{product}',[ProductsController::class,'update'])->name('saler.products.update');
+    Route::post('saler/products',[ProductsController::class,'store'])->name('saler.products.create');
+    Route::delete('saler/products/{product}',[ProductsController::class,'destroy'])->name('saler.products.destroy');
 
 
 

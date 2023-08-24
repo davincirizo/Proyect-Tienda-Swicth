@@ -63,6 +63,7 @@ class User extends Authenticatable
         Mail::to($this->email)->send($correo);
 
     }
+
     public function sendEmailForgotPassword(){
         $search_reset = DB::table('password_reset_tokens')->where('email',$this->email)->first();
         $fronted_url = env('FRONTEND_URL');
@@ -90,5 +91,9 @@ class User extends Authenticatable
 
     public function get_users(){
         return $this->roles = $this->roles;
+    }
+
+    public function products(){
+        return $this->hasMany('App\Models\Product');
     }
 }
