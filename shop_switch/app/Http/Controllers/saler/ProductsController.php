@@ -69,14 +69,23 @@ class ProductsController extends Controller
                 'errors' => $validator->errors(),
             ],400);
         }
-        
-    }
-
-    public function destroy(Category $category){
-        $category->delete();
+        $product->name = $request->name;
+        $product->price = $request->price;
+        $product->quantity = $request->quantity;
+        $product->category_id = $request->category_id;
+        $product->labels()->sync($request->labels);
         return response()->json([
             'res' => true,
-            'msg' => 'Categoria eliminada correctamente',
+            'msg' => 'Producto actualizado correctamente',
+        ],200);
+
+    }
+
+    public function destroy(Product $product){
+        $product->delete();
+        return response()->json([
+            'res' => true,
+            'msg' => 'Producto eliminado correctamente',
         ],200);
     }
 }
