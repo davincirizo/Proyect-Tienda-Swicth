@@ -55,6 +55,12 @@ const styleContainer = {
     width: '80%',
     borderRadius: '8px'
 };
+const styleAlarm = {
+    position: 'absolute',
+    top: '170px',
+    left: '48%',
+    borderRadius: '8px'
+};
 
 const styleButtonFloat = {
   paddingTop: 2,
@@ -254,9 +260,9 @@ function ListCategories() {
             </Box>
 
           </Table>):
-          <div className='buscador_px'>
+          <Box sx={styleAlarm}>
             <NotFound/>
-            </div>}      
+            </Box>}
 
           </>}
       <ToastContainer/>

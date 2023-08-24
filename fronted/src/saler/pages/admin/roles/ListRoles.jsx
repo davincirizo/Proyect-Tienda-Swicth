@@ -15,15 +15,14 @@ import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import Typography from "@mui/material/Typography";
 import {ToastContainer} from "react-toastify";
-import Chip from '@mui/material/Chip';
 import TravelExploreIcon from '@mui/icons-material/TravelExplore';
 import {notification_succes} from "../../../../general/notifications/NotificationTostify.jsx";
 import '../../../../css/Searching.css'
 import { roleApi } from '../../../../apis/QueryAxios'
 import EditRole from "./EditRole.jsx";
-import CreateCategory from "../categories/CraeteCategory.jsx";
 import CreateRole from "./CreateRole.jsx";
 import DeleteRole from "./DeleteRole.jsx";
+import NotFound from "../../../../general/NotFound.jsx";
 
 
 
@@ -62,6 +61,13 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   const styleButtonFloat = {
     paddingTop: 2,
   };
+
+const styleAlarm = {
+    position: 'absolute',
+    top: '170px',
+    left: '48%',
+    borderRadius: '8px'
+};
 
 function ListRoles() {
     const [roles,setRoles] = useState([])
@@ -200,6 +206,8 @@ function ListRoles() {
                 />
               </div>
           ):
+          <>
+              {rolesFilter.length !=0 ?(
           <Table sx={styleContainer}>
           <TableHead>
               <TableRow>
@@ -251,7 +259,11 @@ function ListRoles() {
                       getAllRoles={getAllRoles}
                       enviarMessage={enviarMessage}/>
               </Box>
-          </Table>}
+          </Table>):
+                  <Box sx={styleAlarm}>
+                      <NotFound/>
+                  </Box>}
+          </>}
       <ToastContainer/>
     </>
   )

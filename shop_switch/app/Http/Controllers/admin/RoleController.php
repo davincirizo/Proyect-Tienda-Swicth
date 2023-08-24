@@ -10,6 +10,11 @@ use App\Models\RoleInherit;
 
 class RoleController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth-verify-role')->only('index','store','update','destroy','show');
+
+    }
     public function index(){
         $roles = RoleInherit::getPermissions();
         return response()->json($roles,200);
@@ -24,7 +29,7 @@ class RoleController extends Controller
 
     }
 
-    public function create(Request $request ){
+    public function store(Request $request ){
         $rules = [
             'name' => 'required',
             'permissions'=> 'required',

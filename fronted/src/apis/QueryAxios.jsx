@@ -16,3 +16,7 @@ export const roleApi = axios.create({
 export const permissionsApi = axios.create({
     baseURL:`${backend}/admin/permissions`
 })
+
+export const labelsApi = axios.create({
+    baseURL:`${backend}/admin/labels`
+})

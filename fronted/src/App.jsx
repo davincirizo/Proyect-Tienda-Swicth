@@ -6,6 +6,7 @@ import ForgotPasswordSet from "./auth/ForgotPasswordSet.jsx";
 import ListCategories from './saler/pages/admin/categories/ListCategories';
 import ListUsers from './saler/pages/admin/users/ListUsers';
 import ListRoles from './saler/pages/admin/roles/ListRoles';
+import ListLabels from "./saler/pages/admin/labels/ListLabels.jsx";
 
 function App() {
 
@@ -23,6 +24,7 @@ function App() {
         <Route path='/saler/list_categories' element={<ListCategories/>}/>
         <Route path='/saler/list_users' element={<ListUsers/>}/>
         <Route path='/saler/list_roles' element={<ListRoles/>}/>
+        <Route path='/saler/list_labels' element={<ListLabels/>}/>
       </Routes>
     </BrowserRouter>
     </>

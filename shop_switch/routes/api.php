@@ -45,16 +45,16 @@ Route::group(['middleware' => ['auth-user']],function(){
     Route::get('admin/roles',[RoleController::class,'index'])->name('admin.roles.index');
     Route::get('admin/roles/{role}',[RoleController::class,'show'])->name('admin.roles.show');
     Route::put('admin/roles/{role}',[RoleController::class,'update'])->name('admin.roles.update');
-    Route::post('admin/roles',[RoleController::class,'create'])->name('admin.roles.create');
+    Route::post('admin/roles',[RoleController::class,'store'])->name('admin.roles.create');
     Route::delete('admin/roles/{role}',[RoleController::class,'destroy'])->name('admin.roles.destroy');
 
     Route::get('admin/permissions',[PermissionsController::class,'index'])->name('admin.permissions.index');
 
     Route::get('admin/labels',[LabelController::class,'index'])->name('admin.labels.index');
-    Route::get('admin/labels/{role}',[LabelController::class,'show'])->name('admin.labels.show');
-    Route::put('admin/labels/{role}',[LabelController::class,'update'])->name('admin.labels.update');
-    Route::post('admin/labels',[LabelController::class,'create'])->name('admin.labels.create');
-    Route::delete('admin/labels/{role}',[LabelController::class,'destroy'])->name('admin.labels.destroy');
+    Route::get('admin/labels/{label}',[LabelController::class,'show'])->name('admin.labels.show');
+    Route::put('admin/labels/{label}',[LabelController::class,'update'])->name('admin.labels.update');
+    Route::post('admin/labels',[LabelController::class,'store'])->name('admin.labels.create');
+    Route::delete('admin/labels/{label}',[LabelController::class,'destroy'])->name('admin.labels.destroy');
 
 
 

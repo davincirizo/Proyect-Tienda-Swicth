@@ -22,6 +22,7 @@ import ActiveUser from "./ActiveUser.jsx";
 import EditUser from "./Edituser.jsx";
 import '../../../../css/Searching.css'
 import { usersApi } from '../../../../apis/QueryAxios'
+import NotFound from "../../../../general/NotFound.jsx";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -54,10 +55,13 @@ const styleContainer = {
   width: '80%',
   borderRadius: '8px'
 };
-
-const styleButtonFloat = {
-  paddingTop: 2,
+const styleAlarm = {
+  position: 'absolute',
+  top: '170px',
+  left: '48%',
+  borderRadius: '8px'
 };
+
 
 
 function ListUsers() {
@@ -200,7 +204,8 @@ function ListUsers() {
                 />
               </div>
           ):
-
+          <>
+            {userFilter.length !=0 ?(
           <Table sx={styleContainer}>
             <TableHead>
               <TableRow>
@@ -266,7 +271,11 @@ function ListUsers() {
             </Stack>
            
 
-          </Table>}
+          </Table>):
+                <Box sx={styleAlarm}>
+                  <NotFound/>
+                </Box>}
+          </>}
       <ToastContainer/>
 
     </>
