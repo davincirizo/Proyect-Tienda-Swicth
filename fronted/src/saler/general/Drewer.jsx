@@ -15,11 +15,16 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import { Link } from 'react-router-dom';
 import SupervisedUserCircleIcon from '@mui/icons-material/SupervisedUserCircle';
 import StyleIcon from '@mui/icons-material/Style';
+import storage from "../../storage/Storage.jsx";
+
 
 export default function SwipeableTemporaryDrawer() {
   const [state, setState] = React.useState({
    left: false,
   });
+
+
+
 
   const toggleDrawer = (anchor, open) => (event) => {
     if (
@@ -40,7 +45,9 @@ export default function SwipeableTemporaryDrawer() {
       onClick={toggleDrawer(anchor, false)}
       onKeyDown={toggleDrawer(anchor, false)}
     >
-      <ListItem>
+      {/*{storage.get('authUser').roles.some(role => role.name == 'Admin') ? (*/}
+      {/*    <div>*/}
+            <ListItem>
         <ListItemButton>
           <SettingsIcon/>
           <ListItemText primary='Ajustes de Admin' />
@@ -49,24 +56,32 @@ export default function SwipeableTemporaryDrawer() {
       <Divider />
       <List>
         {[
-          {text:'Categorias',icon:<DisplaySettingsIcon />,route:'/saler/list_categories'},
-          {text:'Etiqutas',icon:<StyleIcon />,route:'/saler/list_labels'},
-          {text:'Usuarios',icon:<PeopleAltIcon />,route:'/saler/list_users'},
-          {text:'Roles',icon:<SupervisedUserCircleIcon />,route:'/saler/list_roles'}
+          {text:'Categorias',icon:<DisplaySettingsIcon />,route:'/saler/list_categories',apiPermission:'admin.categories.index'},
+          {text:'Etiqutas',icon:<StyleIcon />,route:'/saler/list_labels',apiPermission:'admin.labels.index'},
+          {text:'Usuarios',icon:<PeopleAltIcon />,route:'/saler/list_users',apiPermission:'admin.users.index'},
+          {text:'Roles',icon:<SupervisedUserCircleIcon />,route:'/saler/list_roles',apiPermission:'admin.roles.index'}
 
-      ].map((item) => (
-          <ListItem key={item.text} disablePadding>
-            <Link to={item.route} style={{textDecoration: 'none'}}>
+      ].map((route) => (
+            storage.get('authUser').permisos.some(permiso => permiso == route.apiPermission) ?
+          (<ListItem key={route.text} disablePadding>
+            <Link to={route.route} style={{textDecoration: 'none'}}>
               <ListItemButton>
                 <ListItemIcon>
-                {item.icon}
+                {route.icon}
                 </ListItemIcon>
-                <ListItemText primary={item.text} />
+                <ListItemText primary={route.text} />
               </ListItemButton>
             </Link>
-          </ListItem>
+          </ListItem>):<></>
         ))}
       </List>
+          {/*</div>):<div></div>}*/}
+      <ListItem>
+        <ListItemButton>
+          <SettingsIcon/>
+          <ListItemText primary='Options Saler' />
+        </ListItemButton>
+      </ListItem>
     </Box>
   );
 

@@ -7,10 +7,15 @@ import ListCategories from './saler/pages/admin/categories/ListCategories';
 import ListUsers from './saler/pages/admin/users/ListUsers';
 import ListRoles from './saler/pages/admin/roles/ListRoles';
 import ListLabels from "./saler/pages/admin/labels/ListLabels.jsx";
+import {useEffect} from "react";
+import storage from "./storage/Storage.jsx";
 
 function App() {
 
-
+  useEffect (() =>{
+    storage.verify('authToken')
+  },[])
+  console.log(storage.get('authUser'))
   return (
     <>
       <BrowserRouter>

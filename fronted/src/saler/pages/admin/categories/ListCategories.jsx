@@ -224,17 +224,19 @@ function ListCategories() {
                       <Box display="flex">
 
                       <Box sx={{ paddingLeft: 10 }}>
-                        <EditCategory
+                          {storage.get('authUser').permisos.some(permiso => permiso == 'admin.categories.update') ?
+                          (<EditCategory
                             category={category}
                             getAllCategory={getAllCategory}
                             enviarMessage={enviarMessage}
-                        />
+                        />):null}
                       </Box>
                       <Box sx={{ paddingLeft: 10 }}>
-                        <DeleteCategory
+                          {storage.get('authUser').permisos.some(permiso => permiso == 'admin.categories.destroy') ?
+                        (<DeleteCategory
                             category={category}
                             getAllCategory={getAllCategory}
-                            enviarMessage={enviarMessage}/>
+                            enviarMessage={enviarMessage}/>):null}
                       </Box></Box>
 
                     </StyledTableCell>
@@ -254,9 +256,10 @@ function ListCategories() {
               <Pagination variant="outlined" count={totalPages} page={page} onChange={update_page} />
             </Stack>
             <Box sx={styleButtonFloat}>
-              <CreateCategory
+                {storage.get('authUser').permisos.some(permiso => permiso == 'admin.categories.store') ?
+              (<CreateCategory
                   getAllCategory={getAllCategory}
-                  enviarMessage={enviarMessage}/>
+                  enviarMessage={enviarMessage}/>):null}
             </Box>
 
           </Table>):

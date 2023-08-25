@@ -7,6 +7,7 @@ use App\Mail\ForgotPassword;
 use App\Mail\VerifyUser;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
@@ -21,7 +22,6 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
     use HasRoles;
-
     /**
      * The attributes that are mass assignable.
      *
@@ -42,6 +42,8 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+
 
     /**
      * The attributes that should be cast.
@@ -91,6 +93,22 @@ class User extends Authenticatable
 
     public function get_users(){
         return $this->roles = $this->roles;
+    }
+
+    public function permission()
+    {
+
+    }
+
+    public function get_permissions(){
+        $permisos = [];
+        foreach ($this->roles as $role) {
+            foreach ($role->permissions as $permission) {
+                array_push($permisos,$permission->name);
+            }
+
+        }
+        return $this->permisos = $permisos;
     }
 
     public function products(){

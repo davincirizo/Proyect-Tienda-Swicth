@@ -15,7 +15,7 @@ import SwipeableTemporaryDrawer from './Drewer';
 import Register from '../../auth/Register';
 import LoginUser from "../../auth/Login.jsx";
 import storage from "../../storage/Storage.jsx";
-import {useAuthContext} from "../../context/TokenContext.jsx";
+// import {useAuthContext} from "../../context/TokenContext.jsx";
 import {Link, useNavigate} from "react-router-dom";
 import axios from "axios"
 import {show_alert_danger, show_alert_succes} from "../../general/notifications/ShowAlert.jsx";
@@ -26,7 +26,7 @@ import ForgotPasswordForm from "../../auth/ForgotPasswordForm.jsx";
 
 
 export default function NavBarUser() {
-  const {token} = useAuthContext()
+  // const {token} = useAuthContext()
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const isMenuOpen = Boolean(anchorEl);
