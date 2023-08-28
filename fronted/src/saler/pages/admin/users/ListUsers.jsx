@@ -23,6 +23,7 @@ import EditUser from "./Edituser.jsx";
 import '../../../../css/Searching.css'
 import { usersApi } from '../../../../apis/QueryAxios'
 import NotFound from "../../../../general/NotFound.jsx";
+import SessionsUser from "./SessionsUser.jsx";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -225,11 +226,12 @@ function ListUsers() {
                       {user.id}
                     </StyledTableCell>
                     <StyledTableCell align="center">
-                     <ActiveUser
-                         user={user}
-                         getAllUser={getAllUser}
-                         enviarMessage={enviarMessage}
-                     />
+                      {storage.get('authUser') && storage.get('authUser').permisos.some(permiso => permiso == 'admin.users.update') ?
+                        (<ActiveUser
+                           user={user}
+                           getAllUser={getAllUser}
+                           enviarMessage={enviarMessage}
+                       />):null}
                     </StyledTableCell>
                     <StyledTableCell align="center" component="th" scope="row">
                       {user.name}
@@ -248,14 +250,23 @@ function ListUsers() {
 
                     <StyledTableCell  align="center">
                       {/*<Box display="flex">*/}
+                      <Box display="flex">
                         <Box sx={{ paddingLeft: 10 }}>
-                          <EditUser
-                          user={user}
-                          getAllUser={getAllUser}
-                          enviarMessage={enviarMessage}
+                          {storage.get('authUser') && storage.get('authUser').permisos.some(permiso => permiso == 'admin.users.update') ?
+                            (<EditUser
+                            user={user}
+                            getAllUser={getAllUser}
+                            enviarMessage={enviarMessage}
+                            />):null}
+                        </Box>
+                        <Box sx={{ paddingLeft: 10 }}>
+                          <SessionsUser
+                              user={user}
+                              getAllUser={getAllUser}
+                              enviarMessage={enviarMessage}
                           />
                         </Box>
-
+                      </Box>
                     </StyledTableCell>
 
                   </StyledTableRow>

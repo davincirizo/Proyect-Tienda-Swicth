@@ -32,7 +32,7 @@ const style = {
     borderRadius: '8px' ,
 };
 export default function EditLabels (props){
-    const {label,getAllLabels,enviarMessage,categories} = props
+    const {label,getAllLabels,enviarMessage,categories,setLabels,labels} = props
 
     const [category,setcategory] = useState('')
     const [open, setOpen] = React.useState(false);
@@ -64,16 +64,21 @@ export default function EditLabels (props){
             }})
         res.then((data) => {
             setLoading(false)
-            setOpen(false)
-            getAllLabels()
+            setLabels([...labels.filter(label_filter => label_filter.id != label.id),data.data.label])
+            console.log()
+            handleClose()
             enviarMessage(data.data.msg)
-            console.log(data)
         })
             .catch(error => {
                 setLoading(false)
+
                 if(error.response.status == 400) {
                     setErrors(error.response.data.errors)
-                    console.log(error.response.data.errors)
+                }
+                if(error.response.status == 404) {
+                    setOpen(false)
+                    show_alert_danger(error.message)
+                    getAllLabels()
                 }
                 else {
                     setOpen(false)

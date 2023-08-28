@@ -32,11 +32,12 @@ class LabelController extends Controller
                 'errors' => $validator->errors(),
             ], 400);
         }
-        Label::create($request->all());
-
+        $label = Label::create($request->all());
+        $label ->category;
         return response()->json([
             'res' => true,
             'msg' => 'Etiqueta creada correctamente',
+            'label' => $label
         ], 200);
     }
 
@@ -54,9 +55,11 @@ class LabelController extends Controller
             ], 400);
         }
         $label->update($request->all());
+        $label->category;
         return response()->json([
             'res' => true,
             'msg' => 'Etiqueta actualizada correctamente',
+            'label' => $label
         ], 200);
     }
 

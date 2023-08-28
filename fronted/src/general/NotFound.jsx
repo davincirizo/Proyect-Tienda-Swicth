@@ -4,7 +4,7 @@ function NotFound() {
   return (
     <div  style={{left: 230}}>
         <div>
-            <img src={logo} style={{width: '100px', height: 'auto'}}/>
+            <img src={logo} style={{width: '10px', height: 'auto'}}/>
         </div>
         <span>
             NotFound

@@ -36,7 +36,7 @@ const styleButtonFloat = {
     paddingTop: 2,
 };
 function EditRole(props) {
-    const {role,enviarMessage,getAllRoles} = props
+    const {role,enviarMessage,getAllRoles,roles,setRoles} = props
     const [open, setOpen] = React.useState(false);
     const [loading, setLoading] = useState(false);
     const [errors,setErrors] = useState([]);
@@ -58,7 +58,6 @@ function EditRole(props) {
         setOpen(false)
         setErrors([])
         setPermissionsSelected([])
-        setValue("name",role.name)
     }
     const edit_role = async (data) =>{
         const token = storage.get('authToken')
@@ -73,8 +72,9 @@ function EditRole(props) {
                 }
             })
             setLoading(false)
+            console.log(res.data.role)
+            setRoles([...roles.filter(rol => rol.id != role.id),res.data.role])
             handleClose()
-            getAllRoles()
             enviarMessage(res.data.msg)
         }
         catch (e){
@@ -82,6 +82,11 @@ function EditRole(props) {
 
             if(e.response.status == 400) {
                 setErrors(e.response.data.errors)
+            }
+            if(e.response.status == 404) {
+                handleClose()
+                show_alert_danger(e.message)
+                getAllRoles()
             }
             else {
                 setOpen(false)
@@ -121,7 +126,6 @@ function EditRole(props) {
         else{
             setPermissionsSelected(permissionsSelected.filter(o=> o!=value))
         }
-        console.log(permissionsSelected)
     }
     const searcher =  (e) => {
         setSearch(e.target.value)

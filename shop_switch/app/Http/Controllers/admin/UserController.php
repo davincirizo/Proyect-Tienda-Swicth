@@ -5,6 +5,7 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class UserController extends Controller
 {
@@ -15,7 +16,8 @@ class UserController extends Controller
     public function index(Request $request){
         $users = User::all();
         for($i = 0; $i < count($users); $i++){
-            $users[$i]->get_users();
+            $users[$i]->roles;
+            $users[$i]->tokens;
         }
         return response()->json($users, 200);;
 
@@ -35,6 +37,22 @@ class UserController extends Controller
                 'res' => true,
                 'msg' => 'Usuario actualizado correctamente',
             ],200);
+        }
+        if($request->has('token_id')){
+            $token = PersonalAccessToken::where('id','=',$request->token_id)->first();
+            if($token) {
+                $token->delete();
+                return response()->json([
+                    'res' => true,
+                    'msg' => 'Session cerrada correctamente correctamente',
+                ], 200);
+            }
+            else{
+                return response()->json([
+                    'res' => true,
+                    'msg' => 'Esta session esta cerrrada',
+                ], 400);
+            }
         }
         if($request->has('roles')){
             if(!$request->roles){
@@ -66,6 +84,5 @@ class UserController extends Controller
             'msg' => 'Usuario eliminado correctamente',
         ],200);
     }
-
 
 }

@@ -91,15 +91,6 @@ class User extends Authenticatable
         }
     }
 
-    public function get_users(){
-        return $this->roles = $this->roles;
-    }
-
-    public function permission()
-    {
-
-    }
-
     public function get_permissions(){
         $permisos = [];
         foreach ($this->roles as $role) {
@@ -110,6 +101,7 @@ class User extends Authenticatable
         }
         return $this->permisos = $permisos;
     }
+
 
     public function products(){
         return $this->hasMany('App\Models\Product');

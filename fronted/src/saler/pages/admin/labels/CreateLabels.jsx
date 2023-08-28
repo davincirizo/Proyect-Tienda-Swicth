@@ -33,19 +33,20 @@ const style = {
     borderRadius: '8px' ,
 };
 export default function CreateLabels (props){
-    const {getAllLabels,enviarMessage,categories} = props
+    const {enviarMessage,categories,labels,setLabels} = props
 
     const [category,setcategory] = useState('')
     const [open, setOpen] = React.useState(false);
     const [loading, setLoading] = useState(false);
-    const navigate = useNavigate()
     const handleOpen = () => setOpen(true);
     const handleClose = () => {
         setOpen(false)
         setErrors([])
+        setValue("name",'')
+
     }
     const [errors,setErrors] = useState([]);
-    const { register, handleSubmit } = useForm()
+    const { register, handleSubmit,setValue } = useForm()
 
     const create_label = async (data) =>{
         const token = storage.get('authToken')
@@ -61,10 +62,9 @@ export default function CreateLabels (props){
             }})
         res.then((data) => {
             setLoading(false)
-            setOpen(false)
-            getAllLabels()
+            handleClose()
+            setLabels([...labels,data.data.label])
             enviarMessage(data.data.msg)
-            console.log(data)
         })
             .catch(error => {
                 setLoading(false)
@@ -73,7 +73,7 @@ export default function CreateLabels (props){
                     console.log(error.response.data.errors)
                 }
                 else {
-                    setOpen(false)
+                    handleClose()
                     show_alert_danger(error.response.data.msg)
                 }
             })

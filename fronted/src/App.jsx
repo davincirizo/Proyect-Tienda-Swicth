@@ -15,7 +15,6 @@ function App() {
   useEffect (() =>{
     storage.verify('authToken')
   },[])
-  console.log(storage.get('authUser'))
   return (
     <>
       <BrowserRouter>

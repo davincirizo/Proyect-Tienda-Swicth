@@ -27,10 +27,10 @@ export const storage = {
             const res = verify_token(JSON.parse(token))
             res.then((data) => {
                     if (data == false ){
-                        storage.remove('authToken')
-                        storage.remove('authUser')
-                        // window.localStorage.removeItem('authToken');
-                        // window.localStorage.removeItem('authUser');
+                        // storage.remove('authToken')
+                        // storage.remove('authUser')
+                        window.localStorage.removeItem('authToken');
+                        window.localStorage.removeItem('authUser');
 
                     }
 

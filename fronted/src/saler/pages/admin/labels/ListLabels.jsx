@@ -26,7 +26,10 @@ import DeleteLabels from "./DeleteLabels.jsx";
 import Autocomplete from "@mui/material/Autocomplete";
 import DisplaySettingsIcon from "@mui/icons-material/DisplaySettings.js";
 import TextField from "@mui/material/TextField";
-import * as React from "react";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -59,6 +62,7 @@ const styleContainer = {
     width: '80%',
     borderRadius: '8px'
 };
+
 const styleAlarm = {
     position: 'absolute',
     top: '170px',
@@ -69,7 +73,6 @@ const styleAlarm = {
 const styleButtonFloat = {
   paddingTop: 2,
 };
-
 
 function ListLabels() {
     const [categories,setCategories] = useState([])
@@ -84,13 +87,15 @@ function ListLabels() {
     const [totalPages,setTotalPages] = useState(0)
     const [page,setPage] = useState(1)
     const[search,setSearch] = useState("")
+    const [order,setOrder] = useState('id')
+
 
     const enviarMessage = (msg) =>{
         notification_succes(msg)
         setPage(1)
         setSearch('')
     }
-  const getAllLabels = async (value) =>{
+  const getAllLabels = async () =>{
     try
     {
       setLoading(true)
@@ -112,7 +117,7 @@ function ListLabels() {
 
   }
 
-    const getAllCategory = async (value) =>{
+    const getAllCategory = async () =>{
         try
         {
             const token = storage.get('authToken')
@@ -132,33 +137,47 @@ function ListLabels() {
     const searcher =  (e) => {
         setPage(1)
         setSearch(e.target.value)
-        let change = e.target.value
-        update_page(e,'1',change,usersxPage,category_filtered)
     }
 
     const FilteredtCategory = (event,value) =>{
         if( value) {
-            const category_filtered = value.id
             setCategory_filtered(value.id)
-            update_page(event,'1',search,usersxPage,category_filtered)
         }
         else {
             setCategory_filtered(null)
-            update_page(event,'1',search,usersxPage,null)
-
         }
     }
     const update_user_xpage = (e) =>
     {
         if(e.target.value != 0 ) {
             setusersxPage(e.target.value)
-            const user_x_page = e.target.value
-            update_page(e, '1', search, user_x_page, category_filtered)
+           setPage(1)
         }
 
     }
+    const onchange_page = (event,value) =>{
+        setPage(value)
+    }
 
-    const update_page = (event,value,change=search,user_x_page = usersxPage,category=category_filtered) => {
+    const changeOrderBy = (e) =>{
+        setOrder(e.target.value)
+    }
+
+    const order_by = (filtrar,type_order) => {
+        const labels_order = filtrar.sort((a,b) =>{
+            if(a[type_order] < b[type_order]){
+                return -1
+            }
+            if(a[type_order] > b[type_order]){
+                return 1
+            }
+            return 0
+        })
+        return labels_order
+    }
+
+    const update_page = (value,change,user_x_page ,category,order_type) => {
+        order_by(labels,order_type)
         if(change || category) {
             const name = change
             const category_filter = category
@@ -217,11 +236,14 @@ function ListLabels() {
         setPage(value)
     };
 
-
     useEffect (() =>{
         getAllLabels()
         getAllCategory()
   },[])
+
+    useEffect (() =>{
+        update_page(page,search,usersxPage,category_filtered,order)
+  },[search,usersxPage,page,labels,category_filtered,order])
 
   return (
     <div>
@@ -239,7 +261,7 @@ function ListLabels() {
         <Typography sx={{
             top: '90px',
             position: 'absolute',
-            right: '50px'}} >
+            right: '200px'}} >
             <div className='filter'>
                 <label>Filtrar Por</label>
                 <Autocomplete
@@ -253,6 +275,28 @@ function ListLabels() {
                 />
             </div>
         </Typography>
+        <Box sx={{
+            top: '90px',
+            position: 'absolute',
+            right: '50px'}} >
+
+            <Box sx={{ minWidth: 120 }}>
+                <FormControl fullWidth>
+                    <InputLabel id="demo-simple-select-label">Order By</InputLabel>
+                    <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={order}
+                        label="Order By"
+                        onChange={changeOrderBy}
+                    >
+                        <MenuItem value='name'>Nombre</MenuItem>
+                        <MenuItem value='id'>ID</MenuItem>
+                    </Select>
+                </FormControl>
+            </Box>
+
+        </Box>
 
       {loading ? (
               <div style={{
@@ -292,19 +336,26 @@ function ListLabels() {
                       <Box display="flex">
 
                       <Box sx={{ paddingLeft: 10 }}>
-                        <EditLabels
-                            label={label}
-                            categories={categories}
-                            getAllLabels={getAllLabels}
-                            enviarMessage={enviarMessage}
-                        />
+                          {storage.get('authUser').permisos.some(permiso => permiso == 'admin.labels.update') ?
+                              (<EditLabels
+                                label={label}
+                                labels={labels}
+                                setLabels={setLabels}
+                                categories={categories}
+                                getAllLabels={getAllLabels}
+                                enviarMessage={enviarMessage}
+                        />):null}
                       </Box>
                       <Box sx={{ paddingLeft: 10 }}>
-                        <DeleteLabels
+                          {storage.get('authUser').permisos.some(permiso => permiso == 'admin.labels.destroy') ?
+                        (<DeleteLabels
                             label={label}
+                            labels={labels}
+                            setLabels={setLabels}
                             getAllLabels={getAllLabels}
-                            enviarMessage={enviarMessage}/>
-                      </Box></Box>
+                            enviarMessage={enviarMessage}/>):null}
+                         </Box>
+                      </Box>
 
                     </StyledTableCell>
 
@@ -320,13 +371,15 @@ function ListLabels() {
                     </div>
                 </Typography>
               <Typography>Page: {page}</Typography>
-              <Pagination variant="outlined" count={totalPages} page={page} onChange={update_page} />
+              <Pagination variant="outlined" count={totalPages} page={page} onChange={onchange_page} />
             </Stack>
             <Box sx={styleButtonFloat}>
-              <CreateLabels
-                  getAllLabels={getAllLabels}
+                {storage.get('authUser').permisos.some(permiso => permiso == 'admin.labels.create') ?
+              (<CreateLabels
+                  labels={labels}
+                  setLabels={setLabels}
                   categories={categories}
-                  enviarMessage={enviarMessage}/>
+                  enviarMessage={enviarMessage}/>):null}
             </Box>
 
           </Table>):

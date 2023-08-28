@@ -28,7 +28,7 @@ const style = {
     borderRadius: '8px' ,
 };
 export default function DeleteLabels (props){
-    const {label,getAllLabels,enviarMessage} = props
+    const {label,getAllLabels,enviarMessage,setLabels,labels} = props
 
     // const[message,Setmessage] = useState("")
 
@@ -50,13 +50,19 @@ export default function DeleteLabels (props){
             })
             setLoading(false)
             setOpen(false)
-            getAllLabels()
+            setLabels(labels.filter(label_filter => label_filter.id != label.id))
             enviarMessage(res.data.msg)
         }
         catch(e){
-            setLoading(false)
-            setOpen(false)
-            show_alert_danger(e.response.data.msg)
+            if(e.response.status == 404) {
+                show_alert_danger(e.message)
+                getAllLabels()
+            }
+            else {
+                setLoading(false)
+                handleClose()
+                show_alert_danger(e.response.data.msg)
+            }
 
         }
     }

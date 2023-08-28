@@ -23,6 +23,10 @@ import EditRole from "./EditRole.jsx";
 import CreateRole from "./CreateRole.jsx";
 import DeleteRole from "./DeleteRole.jsx";
 import NotFound from "../../../../general/NotFound.jsx";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
 
 
 
@@ -80,6 +84,8 @@ function ListRoles() {
     const [totalPages,setTotalPages] = useState(0)
     const [page,setPage] = useState(1)
     const[search,setSearch] = useState("")
+    const [order,setOrder] = useState('id')
+
 
     const getAllRoles = async () =>{
         try
@@ -108,75 +114,103 @@ function ListRoles() {
       
       const update_user_xpage = (e) =>
       {
-        setusersxPage(e.target.value)
-        const user_x_page = e.target.value
-        update_page(e,'1',search,user_x_page)
-    
-      }
-      const update_page = async (event,value,change=search,user_x_page = usersxPage) => {
-        if(change) {
-          const filter = change
-          const roles_filtered = roles.filter((dato) =>
-              dato.name.toLowerCase().includes(filter.toLocaleLowerCase())
-          )
-            if(roles_filtered){
-              const pages_filtered = Math.ceil(roles_filtered.length/user_x_page)
-              setTotalPages(pages_filtered)
-            }
-            else {
-              setTotalPages(0)
-            }
-    
-            if (value == 1) {
-              const first = 0
-              const second = value * user_x_page
-              setFirstPage(first)
-              setLastPage(second)
-              setRolesFilter(roles_filtered.slice(first, second))
-    
-            } else {
-              const first = (value - 1) * user_x_page
-              const second = value * user_x_page
-              setFirstPage(first)
-              setLastPage(second)
-              setRolesFilter(roles_filtered.slice(first, second))
-            }
-        }
-        else {
-          if (value == 1) {
-            const first = 0
-            const second = value * user_x_page
-            setFirstPage(first)
-            setLastPage(second)
-            setRolesFilter(roles.slice(first, second))
-    
-          } else {
-            const first = (value - 1) * user_x_page
-            const second = value * user_x_page
-            setFirstPage(first)
-            setLastPage(second)
-            setRolesFilter(roles.slice(first, second))
+          if(e.target.value != 0) {
+              setusersxPage(e.target.value)
+              setPage(1)
           }
-          setTotalPages(Math.ceil(roles.length/user_x_page))
-    
-        }
-        setPage(value)
-      };
+      }
       const searcher = (e) => {
         setPage(1)
         setSearch(e.target.value)
-        let change = e.target.value
-        update_page(e,'1',change)
       }
+
+    const onchange_page = (event,value) =>{
+        setPage(value)
+    }
 
     const enviarMessage = (msg) =>{
       notification_succes(msg)
       setSearch('')
     }
 
+    const changeOrderBy = (e) =>{
+        setOrder(e.target.value)
+    }
+
+    const order_by = (filtrar,type_order) => {
+        const role_order = filtrar.sort((a,b) =>{
+            if(a[type_order] < b[type_order]){
+                return -1
+            }
+            if(a[type_order] > b[type_order]){
+                return 1
+            }
+            return 0
+        })
+        return role_order
+    }
+
+    const update_page =  (value,change,user_x_page ,order_type) =>
+    {
+        order_by(roles,order_type)
+        if(change) {
+            const filter = change
+            const roles_filtered = roles.filter((dato) =>
+                dato.name.toLowerCase().includes(filter.toLocaleLowerCase())
+            )
+            if(roles_filtered){
+                const pages_filtered = Math.ceil(roles_filtered.length/user_x_page)
+                setTotalPages(pages_filtered)
+            }
+            else {
+                setTotalPages(0)
+            }
+
+            if (value == 1) {
+                const first = 0
+                const second = value * user_x_page
+                setFirstPage(first)
+                setLastPage(second)
+                setRolesFilter(roles_filtered.slice(first, second))
+
+            } else {
+                const first = (value - 1) * user_x_page
+                const second = value * user_x_page
+                setFirstPage(first)
+                setLastPage(second)
+                setRolesFilter(roles_filtered.slice(first, second))
+            }
+        }
+        else {
+            if (value == 1) {
+                const first = 0
+                const second = value * user_x_page
+                setFirstPage(first)
+                setLastPage(second)
+                setRolesFilter(roles.slice(first, second))
+
+            } else {
+                const first = (value - 1) * user_x_page
+                const second = value * user_x_page
+                setFirstPage(first)
+                setLastPage(second)
+                setRolesFilter(roles.slice(first, second))
+            }
+            setTotalPages(Math.ceil(roles.length/user_x_page))
+
+        }
+        setPage(value)
+    };
+
+
+
       useEffect (() =>{
         getAllRoles()
       },[])
+
+    useEffect (() =>{
+        update_page(page,search,usersxPage,order)
+      },[search,usersxPage,page,roles,order])
 
 
   return (
@@ -192,6 +226,26 @@ function ListRoles() {
           <TravelExploreIcon className="icon" />
         </div>
       </Typography>
+        <Box sx={{
+            top: '90px',
+            position: 'absolute',
+            right: '50px'}} >
+            <Box sx={{ minWidth: 120 }}>
+                <FormControl fullWidth>
+                    <InputLabel id="demo-simple-select-label">Order By</InputLabel>
+                    <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={order}
+                        label="Order By"
+                        onChange={changeOrderBy}
+                    >
+                        <MenuItem value='name'>Nombre</MenuItem>
+                        <MenuItem value='id'>ID</MenuItem>
+                    </Select>
+                </FormControl>
+            </Box>
+        </Box>
       {loading ? (
               <div style={{
                 position: 'absolute',
@@ -228,18 +282,24 @@ function ListRoles() {
                     <StyledTableCell align="center" component="th" scope="row">
                         <Box display="flex">
                             <Box sx={{ paddingLeft: 10 }}>
-                                <EditRole
+                                {storage.get('authUser').permisos.some(permiso => permiso == 'admin.roles.update') ?
+                                (<EditRole
                                 role={role}
+                                setRoles={setRoles}
+                                roles={roles}
                                 getAllRoles={getAllRoles}
                                 enviarMessage={enviarMessage}
-                                />
+                                />):null}
                             </Box>
                             <Box sx={{ paddingLeft: 10 }}>
-                            <DeleteRole
-                                role={role}
-                                getAllRoles={getAllRoles}
-                                enviarMessage={enviarMessage}
-                            />
+                                {storage.get('authUser').permisos.some(permiso => permiso == 'admin.roles.destroy') ?
+                                    (<DeleteRole
+                                        roles={roles}
+                                        setRoles={setRoles}
+                                        role={role}
+                                        getAllRoles={getAllRoles}
+                                        enviarMessage={enviarMessage}
+                                    />):null}
                             </Box>
                         </Box>
                     </StyledTableCell>
@@ -252,12 +312,14 @@ function ListRoles() {
                   <input style={{width:'70px'}} className='input-group-text' type='number' value={usersxPage} onChange={update_user_xpage}/>
                 </div>
               </Typography>
-              <Pagination variant="outlined" count={totalPages} onChange={update_page} page={page}/>
+              <Pagination variant="outlined" count={totalPages} onChange={onchange_page} page={page}/>
             </Stack>
               <Box sx={styleButtonFloat}>
-                  <CreateRole
-                      getAllRoles={getAllRoles}
-                      enviarMessage={enviarMessage}/>
+                  {storage.get('authUser').permisos.some(permiso => permiso == 'admin.roles.create') ?
+                      (<CreateRole
+                          setRoles={setRoles}
+                          roles={roles}
+                          enviarMessage={enviarMessage}/>):null}
               </Box>
           </Table>):
                   <Box sx={styleAlarm}>

@@ -43,10 +43,12 @@ class RoleController extends Controller
         }
         $role = Role::create(['name' => $request->name]);
         $role->syncPermissions($request->permissions);
+        $role->permissions;
 
         return response()->json([
             'status' => true,
-            'msg'=>'Rol Creado Correctamente'
+            'msg'=>'Rol Creado Correctamente',
+            'role' => $role
         ],200);
 
     }
@@ -65,10 +67,12 @@ class RoleController extends Controller
         }
         $role->update($request->all());
         $role->syncPermissions($request->permissions);
+        $role->permissions;
 
         return response()->json([
             'status' => true,
-            'msg'=>'Rol Actualizado Correctamente'
+            'msg'=>'Rol Actualizado Correctamente',
+            'role'=>$role
         ],200);
 
     }
@@ -82,7 +86,7 @@ class RoleController extends Controller
 
     }
 
-    public function get_permissions(){
+    public function getpermissions(){
         $permission = Permission::all();
         return response()->json($permission,200);
     }

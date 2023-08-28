@@ -43,11 +43,13 @@ Route::group(['middleware' => ['auth-user']],function(){
     Route::delete('admin/users/{user}/',[UserController::class,'destroy'])->name('admin.users.destroy');
     Route::get('admin/users/{user}/',[UserController::class,'show'])->name('admin.users.show');
 
+
     Route::get('admin/roles',[RoleController::class,'index'])->name('admin.roles.index');
     Route::get('admin/roles/{role}',[RoleController::class,'show'])->name('admin.roles.show');
     Route::put('admin/roles/{role}',[RoleController::class,'update'])->name('admin.roles.update');
     Route::post('admin/roles',[RoleController::class,'store'])->name('admin.roles.create');
     Route::delete('admin/roles/{role}',[RoleController::class,'destroy'])->name('admin.roles.destroy');
+    Route::get('admin/roles/getpermissions',[RoleController::class,'getpermissions'])->name('admin.roles.getpermissions');
 
     Route::get('admin/permissions',[PermissionsController::class,'index'])->name('admin.permissions.index');
 

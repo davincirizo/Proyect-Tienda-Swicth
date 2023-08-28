@@ -28,9 +28,10 @@ const style = {
     borderRadius: '8px' ,
 };
 export default function DeleteRole(props){
-    const {role,getAllRoles,enviarMessage} = props
+    const {role,getAllRoles,enviarMessage,roles,setRoles} = props
     const [open, setOpen] = React.useState(false);
     const [loading, setLoading] = useState(false);
+
     const handleOpen = () => setOpen(true);
     const handleClose = () => {
         setOpen(false)
@@ -46,14 +47,20 @@ export default function DeleteRole(props){
                 }
             })
             setLoading(false)
-            setOpen(false)
-            getAllRoles()
+            handleClose()
+            setRoles(roles.filter(rol => rol.id != role.id))
             enviarMessage(res.data.msg)
         }
         catch(e){
-            setLoading(false)
-            setOpen(false)
-            show_alert_danger(e.response.data.msg)
+            if(e.response.status == 404) {
+                show_alert_danger(e.message)
+                getAllRoles()
+            }
+            else {
+                setLoading(false)
+                handleClose()
+                show_alert_danger(e.response.data.msg)
+            }
 
         }
     }

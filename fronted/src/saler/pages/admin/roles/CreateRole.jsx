@@ -33,7 +33,7 @@ const style = {
     borderRadius: '8px' ,
 };
 function CreateRole(props) {
-    const {enviarMessage,getAllRoles} = props
+    const {enviarMessage,roles,setRoles} = props
     const [open, setOpen] = React.useState(false);
     const [loading, setLoading] = useState(false);
     const [errors,setErrors] = useState([]);
@@ -69,7 +69,7 @@ function CreateRole(props) {
             })
             setLoading(false)
             handleClose()
-            getAllRoles()
+            setRoles([...roles,res.data.role])
             enviarMessage(res.data.msg)
         }
         catch (e){
@@ -126,7 +126,6 @@ function CreateRole(props) {
             dato.description.toLowerCase().includes(value.toLocaleLowerCase())
         )
         setFilter_permissions(permissions_filtered)
-        console.log(filter_permissions)
     }
 
     useEffect (() =>{

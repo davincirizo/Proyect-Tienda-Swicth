@@ -35,6 +35,7 @@ class CategoryController extends Controller
         return response()->json([
             'res' => true,
             'msg' => 'Categoria creada correctamente',
+            'category' => $category
         ],200);
     }
 
@@ -54,13 +55,14 @@ class CategoryController extends Controller
             return response()->json([
                 'res' => true,
                 'msg' => 'Categoria actualizada correctamente',
+                'category' => $category
             ],200);
         }
         else{
             return response()->json([
                 'res' => true,
-                'msg' => 'Categoria no encontarda',
-            ],400);
+                'msg' => 'Esta Categoria no Existe',
+            ],404);
         }
     }
 

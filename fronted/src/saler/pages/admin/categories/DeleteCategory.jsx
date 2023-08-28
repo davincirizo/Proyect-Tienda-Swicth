@@ -7,7 +7,7 @@ import {show_alert_danger} from "../../../../general/notifications/ShowAlert.jsx
 import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
 import Button from "@mui/material/Button";
 import { categoryApi } from '../../../../apis/QueryAxios.jsx';
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 
 
 
@@ -28,10 +28,8 @@ const style = {
     borderRadius: '8px' ,
 };
 export default function DeleteCategory (props){
-    const {category} = props
-    const {getAllCategory} = props
-    const {enviarMessage} = props
-    // const[message,Setmessage] = useState("")
+    const {category,getAllCategory,enviarMessage,categories,setCategories} = props
+
 
     const [open, setOpen] = React.useState(false);
     const [loading, setLoading] = useState(false);
@@ -50,19 +48,23 @@ export default function DeleteCategory (props){
                 }
             })
             setLoading(false)
-            setOpen(false)
-            getAllCategory()
+            setCategories(categories.filter(category_filter => category_filter.id != category.id))
+            handleClose()
             enviarMessage(res.data.msg)
         }
         catch(e){
             setLoading(false)
-            setOpen(false)
-            show_alert_danger(e.response.data.msg)
+            handleOpen()
+            if(e.response.status == 404) {
+                show_alert_danger(e.message)
+                getAllCategory()
+            }
+            else {
+                show_alert_danger(e.response.data.msg)
+            }
      
         }
     }
-
-
 
     return(
         <>

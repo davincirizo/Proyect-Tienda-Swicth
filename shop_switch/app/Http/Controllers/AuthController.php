@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\PersonalAccessToken;
+use UAParser\Parser;
 
 class AuthController extends Controller
 {
@@ -86,6 +87,9 @@ class AuthController extends Controller
 
 
     public function login(Request $request ){
+        $agenteDeUsuario = $_SERVER["HTTP_USER_AGENT"];
+        $parseador = Parser::create();
+        $info = $parseador->parse($agenteDeUsuario);
         $rules = [
             'email' => 'required',
             'password' => 'required',
@@ -113,6 +117,11 @@ class AuthController extends Controller
         }
 
         $token = $user->createToken($request->email)->plainTextToken;
+        $access = PersonalAccessToken::findToken($token);
+        $access->info = $info->toString();
+        $access->save();
+//        $token->info = $info->toString();
+
         $user->roles;
         $user->get_permissions();
 
@@ -183,7 +192,6 @@ class AuthController extends Controller
 
     }
 
-
     public function reset_password(Request $request,$token){
         $rules = [
             'password' => 'required',
@@ -224,6 +232,10 @@ class AuthController extends Controller
         }
 
 
+    }
+
+    public function update_usage_token(){
+        
     }
 
 

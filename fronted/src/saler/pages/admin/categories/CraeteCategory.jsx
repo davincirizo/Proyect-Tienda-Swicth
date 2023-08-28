@@ -31,16 +31,15 @@ const style = {
 export default function CreateCategory (props){
     const [open, setOpen] = React.useState(false);
     const [loading, setLoading] = useState(false);
-    const {getAllCategory} = props
-    const {enviarMessage} = props
+    const {enviarMessage,categories,setCategories} = props
     const handleOpen = () => setOpen(true);
     const handleClose = () => {
         setOpen(false)
         setErrors([])
+        setValue("name",'')
     }
     const [errors,setErrors] = useState([]);
-    const url = import.meta.env.VITE_BACKEND_URL
-    const { register, handleSubmit } = useForm()
+    const { register, handleSubmit,setValue } = useForm()
 
     const create_category = async (data) =>{
         const token = storage.get('authToken')
@@ -55,10 +54,9 @@ export default function CreateCategory (props){
                 }})
             res.then((data) => {
                 setLoading(false)
-                setOpen(false)
-                getAllCategory()
+                handleClose()
+                setCategories([...categories,data.data.category])
                 enviarMessage(data.data.msg)
-                console.log(data)
             })
                 .catch(error => {
                     setLoading(false)
@@ -71,9 +69,6 @@ export default function CreateCategory (props){
                     }
                 })
         }
-
-
-
 
     return(
         <>

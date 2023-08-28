@@ -28,23 +28,20 @@ const style = {
     borderRadius: '8px' ,
 };
 export default function EditCategory (props){
-    const {category} = props
-    const {getAllCategory} = props
-    const {enviarMessage} = props
-    // const[message,Setmessage] = useState("")
-
+    const {category,enviarMessage,setCategories,categories,getAllCategory} = props
     const [open, setOpen] = React.useState(false);
     const [loading, setLoading] = useState(false);
-    const handleOpen = () => setOpen(true);
+    const handleOpen = () => {
+        setValue("name",category.name)
+        setOpen(true)
+    };
     const handleClose = () => {
         setOpen(false)
         setErrors([])
     }
     const [errors,setErrors] = useState([]);
     const { register, handleSubmit,setValue } = useForm()
-    useEffect (() =>{
-        setValue("name",category.name)
-    },[])
+
 
     const edit_category = async (data) =>{
         const token = storage.get('authToken')
@@ -58,8 +55,8 @@ export default function EditCategory (props){
                         'Authorization': `Bearer ${token}` }
             })
             setLoading(false)
-            setOpen(false)
-            getAllCategory()
+            setCategories([...categories.filter(category_filter => category_filter.id != category.id),res.data.category])
+            handleClose()
             enviarMessage(res.data.msg)
         }
         catch(e){
@@ -67,8 +64,14 @@ export default function EditCategory (props){
             if(e.response.status == 400) {
                 setErrors(e.response.data.errors)
             }
+            if(e.response.status == 404) {
+                setOpen(false)
+                show_alert_danger(e.message)
+                getAllCategory()
+            }
             else {
                 setOpen(false)
+                console.log(e)
                 show_alert_danger(e.response.data.msg)
             }
         }

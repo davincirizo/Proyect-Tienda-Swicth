@@ -1,4 +1,4 @@
-import { useState,useEffect } from 'react'
+import {useState, useEffect, useRef} from 'react'
 import NavBarSaler from '../../../general/NavBarSale'
 import storage from '../../../../storage/Storage'
 import { useNavigate } from 'react-router-dom'
@@ -23,6 +23,10 @@ import {categoryApi} from "../../../../apis/QueryAxios.jsx";
 import TravelExploreIcon from "@mui/icons-material/TravelExplore.js";
 import '../../../../css/Searching.css'
 import NotFound from '../../../../general/NotFound';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -55,6 +59,7 @@ const styleContainer = {
     width: '80%',
     borderRadius: '8px'
 };
+
 const styleAlarm = {
     position: 'absolute',
     top: '170px',
@@ -78,6 +83,7 @@ function ListCategories() {
     const [totalPages,setTotalPages] = useState(0)
     const [page,setPage] = useState(1)
     const[search,setSearch] = useState("")
+    const [order,setOrder] = useState('id')
 
     const enviarMessage = (msg) =>{
         notification_succes(msg)
@@ -95,6 +101,7 @@ function ListCategories() {
         }})
       setLoading(false)
       setCategories(response.data)
+        // setKeysCategories(Object.keys(response.data[0]))
       setCategoriesFilter(response.data.slice(firstPage,lastPage))
         setTotalPages(Math.ceil(response.data.length/usersxPage))
     }
@@ -108,11 +115,26 @@ function ListCategories() {
     const searcher =  (e) => {
         setPage(1)
         setSearch(e.target.value)
-        let change = e.target.value
-        update_page(e,'1',change)
     }
-  const update_page = (event,value,change=search,user_x_page = usersxPage) => {
-      if(change) {
+    const onchange_page = (event,value) =>{
+        setPage(value)
+    }
+
+    const update_user_xpage = (e) =>
+    {
+        if(e.target.value != 0) {
+            setusersxPage(e.target.value)
+            setPage(1)
+        }
+
+    }
+    const changeOrderBy = (e) =>{
+        setOrder(e.target.value)
+    }
+
+    const update_page = (value,change,user_x_page,order_ytpe) => {
+        order_by(categories,order_ytpe)
+        if(change) {
           const filter = change
           const categories_filtered = categories.filter((dato) =>
               dato.name.toLowerCase().includes(filter.toLocaleLowerCase())
@@ -141,14 +163,15 @@ function ListCategories() {
           }
       }
       else {
-          if (value == 1) {
+          if (value == 1){
               const first = 0
               const second = value * user_x_page
               setFirstPage(first)
               setLastPage(second)
               setCategoriesFilter(categories.slice(first, second))
 
-          } else {
+          }
+          else {
               const first = (value - 1) * user_x_page
               const second = value * user_x_page
               setFirstPage(first)
@@ -156,24 +179,33 @@ function ListCategories() {
               setCategoriesFilter(categories.slice(first, second))
           }
           setTotalPages(Math.ceil(categories.length/user_x_page))
-
       }
-      setPage(value)
   };
-    const update_user_xpage = (e) =>
-    {
-        setusersxPage(e.target.value)
-        const user_x_page = e.target.value
-        update_page(e,'1',search,user_x_page)
 
+    const order_by = (filtrar,type_order) => {
+        const category_order = filtrar.sort((a,b) =>{
+            if(a[type_order] < b[type_order]){
+                return -1
+            }
+            if(a[type_order] > b[type_order]){
+                return 1
+            }
+            return 0
+        })
+        return category_order
     }
 
     useEffect (() =>{
       getAllCategory()
   },[])
 
-  // const imgUrl = 'https://blog.hubspot.es/hs-fs/hubfs/Ejemplo%20de%20fondo%20de%20pa%CC%81gina%20web%20con%20gra%CC%81ficos%20en%20Monys.jpg?width=590&name=Ejemplo%20de%20fondo%20de%20pa%CC%81gina%20web%20con%20gra%CC%81ficos%20en%20Monys.jpg'
-  // style={{ backgroundImage: `url(${imgUrl})`}}
+
+    useEffect (() =>{
+        update_page(page,search,usersxPage,order)
+  },[search,usersxPage,page,categories,order])
+
+
+
   return (
     <div>
         <NavBarSaler/>
@@ -188,6 +220,26 @@ function ListCategories() {
             </div>
 
         </Typography>
+        <Box sx={{
+            top: '90px',
+            position: 'absolute',
+            right: '50px'}} >
+                <Box sx={{ minWidth: 120 }}>
+                    <FormControl fullWidth>
+                        <InputLabel id="demo-simple-select-label">Order By</InputLabel>
+                        <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            value={order}
+                            label="Order By"
+                            onChange={changeOrderBy}
+                        >
+                            <MenuItem value='name'>Nombre</MenuItem>
+                            <MenuItem value='id'>ID</MenuItem>
+                        </Select>
+                    </FormControl>
+                </Box>
+        </Box>
       {loading ? (
               <div style={{
                 position: 'absolute',
@@ -207,6 +259,7 @@ function ListCategories() {
           <Table sx={styleContainer}>
             <TableHead>
               <TableRow>
+
                 <StyledTableCell>ID</StyledTableCell>
                 <StyledTableCell align="right">Nombre</StyledTableCell>
                 <StyledTableCell align="right"></StyledTableCell>
@@ -227,8 +280,10 @@ function ListCategories() {
                           {storage.get('authUser').permisos.some(permiso => permiso == 'admin.categories.update') ?
                           (<EditCategory
                             category={category}
-                            getAllCategory={getAllCategory}
                             enviarMessage={enviarMessage}
+                            setCategories={setCategories}
+                            categories={categories}
+                            getAllCategory={getAllCategory}
                         />):null}
                       </Box>
                       <Box sx={{ paddingLeft: 10 }}>
@@ -236,7 +291,10 @@ function ListCategories() {
                         (<DeleteCategory
                             category={category}
                             getAllCategory={getAllCategory}
-                            enviarMessage={enviarMessage}/>):null}
+                            enviarMessage={enviarMessage}
+                            setCategories={setCategories}
+                            categories={categories}
+                        />):null}
                       </Box></Box>
 
                     </StyledTableCell>
@@ -253,12 +311,13 @@ function ListCategories() {
                     </div>
                 </Typography>
               <Typography>Page: {page}</Typography>
-              <Pagination variant="outlined" count={totalPages} page={page} onChange={update_page} />
+              <Pagination variant="outlined" count={totalPages} page={page} onChange={onchange_page} />
             </Stack>
             <Box sx={styleButtonFloat}>
                 {storage.get('authUser').permisos.some(permiso => permiso == 'admin.categories.store') ?
               (<CreateCategory
-                  getAllCategory={getAllCategory}
+                  categories={categories}
+                  setCategories={setCategories}
                   enviarMessage={enviarMessage}/>):null}
             </Box>
 
