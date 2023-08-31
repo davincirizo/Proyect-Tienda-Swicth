@@ -31,7 +31,7 @@ class VerifyRole
         }
         return response()->json([
         'status' => false,
-        'msg' => 'No tiene acceso a esa ruta',
+        'msg' => 'Forbidden',
     ],403);
 
     }

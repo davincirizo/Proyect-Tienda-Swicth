@@ -1,8 +1,8 @@
-import {useState, useEffect, useRef} from 'react'
+import {useState, useEffect} from 'react'
 import NavBarSaler from '../../../general/NavBarSale'
 import storage from '../../../../storage/Storage'
 import { useNavigate } from 'react-router-dom'
-import {show_alert_danger} from "../../../../general/notifications/ShowAlert.jsx";
+import {alert_time_out, show_alert_danger} from "../../../../general/notifications/ShowAlert.jsx";
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -27,6 +27,8 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import {handleResponse} from "../../../../general/HandleResponse.jsx";
+
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -99,16 +101,14 @@ function ListCategories() {
         headers: {
           'Authorization': `Bearer ${token}`
         }})
-      setLoading(false)
-      setCategories(response.data)
-        // setKeysCategories(Object.keys(response.data[0]))
-      setCategoriesFilter(response.data.slice(firstPage,lastPage))
+        setLoading(false)
+        setCategories(response.data)
+        setCategoriesFilter(response.data.slice(firstPage,lastPage))
         setTotalPages(Math.ceil(response.data.length/usersxPage))
     }
     catch(e){
-      setLoading(false)
-      show_alert_danger(e.response.data.msg)
-      navigate('/')
+        setLoading(false)
+        handleResponse(e,navigate)
     }
 
   }

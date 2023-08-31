@@ -6,10 +6,12 @@ import {useEffect, useState} from 'react';
 import {PulseLoader } from "react-spinners";
 import DisplaySettingsIcon from '@mui/icons-material/DisplaySettings';
 import storage from "../../../../storage/Storage.jsx";
-import {show_alert_danger} from "../../../../general/notifications/ShowAlert.jsx";
+import {alert_time_out, show_alert_danger} from "../../../../general/notifications/ShowAlert.jsx";
 import EditIcon from '@mui/icons-material/Edit';
 import EditCalendarRoundedIcon from '@mui/icons-material/EditCalendarRounded';
 import { categoryApi } from '../../../../apis/QueryAxios.jsx';
+import {useNavigate} from "react-router-dom";
+import {handleResponse} from "../../../../general/HandleResponse.jsx";
 
 
 
@@ -31,6 +33,7 @@ export default function EditCategory (props){
     const {category,enviarMessage,setCategories,categories,getAllCategory} = props
     const [open, setOpen] = React.useState(false);
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate()
     const handleOpen = () => {
         setValue("name",category.name)
         setOpen(true)
@@ -43,41 +46,52 @@ export default function EditCategory (props){
     const { register, handleSubmit,setValue } = useForm()
 
 
-    const edit_category = async (data) =>{
+    const edit_category = async (data) => {
         const token = storage.get('authToken')
         setErrors([])
-        try{
+        try {
             setLoading(true)
-            const res = await categoryApi.put(`/${category.id}`,{
-                name:data.name,
-            },{
+            const res = await categoryApi.put(`/${category.id}`, {
+                name: data.name,
+            }, {
                 headers: {
-                        'Authorization': `Bearer ${token}` }
+                    'Authorization': `Bearer ${token}`
+                }
             })
             setLoading(false)
-            setCategories([...categories.filter(category_filter => category_filter.id != category.id),res.data.category])
+            setCategories([...categories.filter(category_filter => category_filter.id != category.id), res.data.category])
             handleClose()
             enviarMessage(res.data.msg)
-        }
-        catch(e){
+        } catch (e) {
             setLoading(false)
-            if(e.response.status == 400) {
-                setErrors(e.response.data.errors)
-            }
-            if(e.response.status == 404) {
-                setOpen(false)
-                show_alert_danger(e.message)
-                getAllCategory()
-            }
-            else {
-                setOpen(false)
-                console.log(e)
-                show_alert_danger(e.response.data.msg)
-            }
+            handleResponse(e,navigate,setErrors,handleClose,getAllCategory)
+            // if (e.message === "Network Error") {
+            //     alert_time_out()
+            //     navigate('/saler/dashboardSaler')
+            // }
+            // if (e.response.status == 400) {
+            //     setErrors(e.response.data.errors)
+            // }
+            // if (e.response.status == 401) {
+            //     handleClose()
+            //     storage.clear()
+            //     show_alert_danger(e.response.data.msg)
+            //     navigate('/')
+            // }
+            // if (e.response.status == 403) {
+            //     handleClose()
+            //     show_alert_danger(e.response.data.msg)
+            //     navigate('/')
+            // }
+            // if (e.response.status == 404) {
+            //     handleClose()
+            //     show_alert_danger(e.message)
+            //     getAllCategory()
+            // }
+
         }
+
     }
-
-
 
     return(
         <>

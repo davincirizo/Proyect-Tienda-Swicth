@@ -9,8 +9,10 @@ import AddIcon from '@mui/icons-material/Add';
 import DisplaySettingsIcon from '@mui/icons-material/DisplaySettings';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import storage from "../../../../storage/Storage.jsx";
-import {show_alert_danger} from "../../../../general/notifications/ShowAlert.jsx";
+import {alert_time_out, show_alert_danger} from "../../../../general/notifications/ShowAlert.jsx";
 import {categoryApi} from "../../../../apis/QueryAxios.jsx";
+import {useNavigate} from "react-router-dom";
+import {handleResponse} from "../../../../general/HandleResponse.jsx";
 
 
 
@@ -29,9 +31,11 @@ const style = {
     borderRadius: '8px' ,
 };
 export default function CreateCategory (props){
+    const {enviarMessage,categories,setCategories} = props
+    const navigate = useNavigate()
     const [open, setOpen] = React.useState(false);
     const [loading, setLoading] = useState(false);
-    const {enviarMessage,categories,setCategories} = props
+
     const handleOpen = () => setOpen(true);
     const handleClose = () => {
         setOpen(false)
@@ -60,13 +64,7 @@ export default function CreateCategory (props){
             })
                 .catch(error => {
                     setLoading(false)
-                    if(error.response.status == 400) {
-                        setErrors(error.response.data.errors)
-                    }
-                    else {
-                        setOpen(false)
-                        show_alert_danger(error.response.data.msg)
-                    }
+                    handleResponse(error,navigate,setErrors)
                 })
         }
 
