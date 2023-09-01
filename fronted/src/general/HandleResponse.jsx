@@ -4,10 +4,10 @@ import storage from "../storage/Storage.jsx";
 
 
 export function handleResponse(response,navigate,setErrors=null,handleClose=null,getItems=null) {
-
+    console.log(response)
     if (response.message === "Network Error") {
         alert_time_out()
-        navigate('/saler/dashboardSaler')
+        navigate('/')
     }
     if(response.response.status == 400) {
         setErrors(response.response.data.errors)
@@ -22,6 +22,11 @@ export function handleResponse(response,navigate,setErrors=null,handleClose=null
         navigate('/')
     }
     if (response.response.status == 404) {
+        handleClose()
+        show_alert_danger(response.message)
+        getItems()
+    }
+    if(response.response.status == 500) {
         handleClose()
         show_alert_danger(response.message)
         getItems()

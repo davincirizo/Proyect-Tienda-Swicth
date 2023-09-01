@@ -14,6 +14,7 @@ import {categoryApi, labelsApi} from "../../../../apis/QueryAxios.jsx";
 import {useNavigate} from "react-router-dom";
 import EditCalendarRoundedIcon from '@mui/icons-material/EditCalendarRounded';
 import EditIcon from '@mui/icons-material/Edit';
+import {handleResponse} from "../../../../general/HandleResponse.jsx";
 
 
 
@@ -71,19 +72,8 @@ export default function EditLabels (props){
         })
             .catch(error => {
                 setLoading(false)
+                handleResponse(error,navigate,setErrors,handleClose,getAllLabels)
 
-                if(error.response.status == 400) {
-                    setErrors(error.response.data.errors)
-                }
-                if(error.response.status == 404) {
-                    setOpen(false)
-                    show_alert_danger(error.message)
-                    getAllLabels()
-                }
-                else {
-                    setOpen(false)
-                    show_alert_danger(error.response.data.msg)
-                }
             })
     }
 

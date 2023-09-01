@@ -30,6 +30,7 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
+import {handleResponse} from "../../../../general/HandleResponse.jsx";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -105,35 +106,17 @@ function ListLabels() {
           'Authorization': `Bearer ${token}`
         }})
          setLoading(false)
-        setLabels(response.data)
-        setLabelsFilter(response.data.slice(firstPage,lastPage))
+        setLabels(response.data.labels)
+        setCategories(response.data.categories)
+        setLabelsFilter(response.data.labels.slice(firstPage,lastPage))
         setTotalPages(Math.ceil(response.data.length/usersxPage))
     }
     catch(e){
-      setLoading(false)
-      show_alert_danger(e.response.data.msg)
-      navigate('/')
+      handleResponse(e,navigate,null,null,getAllLabels)
     }
 
   }
 
-    const getAllCategory = async () =>{
-        try
-        {
-            const token = storage.get('authToken')
-            const response = await categoryApi.get('/',{
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }})
-            setLoading(false)
-            setCategories(response.data)
-        }
-        catch(e){
-            show_alert_danger(e.response.data.msg)
-            navigate('/')
-        }
-
-    }
     const searcher =  (e) => {
         setPage(1)
         setSearch(e.target.value)
@@ -238,7 +221,6 @@ function ListLabels() {
 
     useEffect (() =>{
         getAllLabels()
-        getAllCategory()
   },[])
 
     useEffect (() =>{
@@ -376,6 +358,7 @@ function ListLabels() {
             <Box sx={styleButtonFloat}>
                 {storage.get('authUser').permisos.some(permiso => permiso == 'admin.labels.create') ?
               (<CreateLabels
+                  getAllLabels={getAllLabels}
                   labels={labels}
                   setLabels={setLabels}
                   categories={categories}

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\Label;
 use Illuminate\Http\Request;
 
@@ -16,7 +17,12 @@ class LabelController extends Controller
     public function index()
     {
         $labels = Label::getAllLabels();
-        return $labels;
+        $categories = Category::all();
+        return response()->json([
+            'res' => true,
+            'labels' => $labels,
+            'categories' => $categories
+        ], 200);
     }
 
     public function store(Request $request)

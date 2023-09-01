@@ -17,6 +17,8 @@ import ListSubheader from '@mui/material/ListSubheader';
 import TravelExploreIcon from "@mui/icons-material/TravelExplore.js";
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add.js";
+import {handleResponse} from "../../../../general/HandleResponse.jsx";
+import NotFound from "../../../../general/NotFound.jsx";
 
 
 const style = {
@@ -33,14 +35,12 @@ const style = {
     borderRadius: '8px' ,
 };
 function CreateRole(props) {
-    const {enviarMessage,roles,setRoles} = props
+    const {enviarMessage,roles,setRoles,allpermissions,modelsPermissions,getAllRoles} = props
     const [open, setOpen] = React.useState(false);
     const [loading, setLoading] = useState(false);
     const [errors,setErrors] = useState([]);
     const { register, handleSubmit,setValue } = useForm()
-    const [allpermissions,setPermissions] = useState([])
-    const [filter_permissions,setFilter_permissions] = useState([])
-    const [modelsPermissions,setModelsPermissions] = useState([])
+    const [filter_permissions,setFilter_permissions] = useState(allpermissions)
     const [permissionsSelected,setPermissionsSelected] = useState([])
     const navigate = useNavigate()
     const[search,setSearch] = useState("")
@@ -54,6 +54,8 @@ function CreateRole(props) {
         setErrors([])
         setValue("name",'')
         setPermissionsSelected([])
+        setSearch('')
+        setFilter_permissions(allpermissions)
     }
     const create_role = async (data) =>{
         const token = storage.get('authToken')
@@ -74,50 +76,22 @@ function CreateRole(props) {
         }
         catch (e){
             setLoading(false)
-
-            if(e.response.status == 400) {
-                setErrors(e.response.data.errors)
-                console.log(e.response.data.errors)
-            }
-            else {
-                setOpen(false)
-                show_alert_danger(e.response.data.msg)
-            }
+            handleResponse(e,navigate,setErrors,handleClose,getAllRoles)
 
         }
     }
 
-    const getAll_permission = async () => {
-        try {
-            setLoading(true)
-            const token = storage.get('authToken')
-            const response = await permissionsApi.get('', {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            })
-            setPermissions(response.data.permission)
-            setFilter_permissions(response.data.permission)
-            setModelsPermissions(response.data.models)
-            setLoading(false)
 
-        }
-        catch(e){
-            setLoading(false)
-            show_alert_danger(e.response.data.msg)
-            navigate('/')
-        }
-    }
 
     const checkBoxRole =  (e)=>{
         const {value,checked} = e.target
+        console.log(value)
         if(checked){
             setPermissionsSelected([...permissionsSelected,value])
         }
         else{
             setPermissionsSelected(permissionsSelected.filter(o=> o!=value))
         }
-        console.log(permissionsSelected)
     }
     const searcher =  (e) => {
         setSearch(e.target.value)
@@ -128,9 +102,6 @@ function CreateRole(props) {
         setFilter_permissions(permissions_filtered)
     }
 
-    useEffect (() =>{
-        getAll_permission()
-    },[])
 
     return (
         <>
@@ -217,6 +188,7 @@ function CreateRole(props) {
                                                             <Checkbox
                                                                 value={permission.id}
                                                                 onChange={checkBoxRole}
+                                                                checked={permissionsSelected.map(r => r).includes(permission.id)}
                                                             />
                                                         </div>):null
 
@@ -226,7 +198,7 @@ function CreateRole(props) {
                                     ))}
                                 </List>):
                                 <div>
-                                    No Found
+                                    <NotFound/>
                                 </div>}
 
                             {errors.permissions &&(

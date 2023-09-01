@@ -65,30 +65,6 @@ export default function EditCategory (props){
         } catch (e) {
             setLoading(false)
             handleResponse(e,navigate,setErrors,handleClose,getAllCategory)
-            // if (e.message === "Network Error") {
-            //     alert_time_out()
-            //     navigate('/saler/dashboardSaler')
-            // }
-            // if (e.response.status == 400) {
-            //     setErrors(e.response.data.errors)
-            // }
-            // if (e.response.status == 401) {
-            //     handleClose()
-            //     storage.clear()
-            //     show_alert_danger(e.response.data.msg)
-            //     navigate('/')
-            // }
-            // if (e.response.status == 403) {
-            //     handleClose()
-            //     show_alert_danger(e.response.data.msg)
-            //     navigate('/')
-            // }
-            // if (e.response.status == 404) {
-            //     handleClose()
-            //     show_alert_danger(e.message)
-            //     getAllCategory()
-            // }
-
         }
 
     }

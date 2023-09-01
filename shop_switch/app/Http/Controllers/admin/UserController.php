@@ -5,6 +5,7 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 use Laravel\Sanctum\PersonalAccessToken;
 
 class UserController extends Controller
@@ -13,13 +14,17 @@ class UserController extends Controller
     {
         $this->middleware('auth-verify-role')->only('index','update','destroy','show');
     }
-    public function index(Request $request){
+    public function index(){
         $users = User::all();
+        $roles = Role::all();
         for($i = 0; $i < count($users); $i++){
             $users[$i]->roles;
             $users[$i]->tokens;
         }
-        return response()->json($users, 200);;
+        return response()->json([
+            'users'=>$users,
+            'roles'=>$roles
+        ], 200);;
 
     }
 
@@ -33,9 +38,12 @@ class UserController extends Controller
                 $user->active = true;
             }
             $user->save();
+            $user->tokens;
+            $user->roles;
             return response()->json([
                 'res' => true,
                 'msg' => 'Usuario actualizado correctamente',
+                'user'=>$user
             ],200);
         }
         if($request->has('token_id')){
@@ -63,9 +71,12 @@ class UserController extends Controller
             }
             else{
                 $user->roles()->sync($request->roles);
+                $user->tokens;
+                $user->roles;
                 return response()->json([
                     'res' => true,
                     'msg' => 'Usuario actualizado correctamente',
+                    'user' => $user
                 ],200);
             }
 

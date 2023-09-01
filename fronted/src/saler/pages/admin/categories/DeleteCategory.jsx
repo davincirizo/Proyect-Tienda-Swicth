@@ -8,6 +8,8 @@ import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
 import Button from "@mui/material/Button";
 import { categoryApi } from '../../../../apis/QueryAxios.jsx';
 import {useEffect, useState} from 'react';
+import {handleResponse} from "../../../../general/HandleResponse.jsx";
+import {useNavigate} from "react-router-dom";
 
 
 
@@ -29,7 +31,7 @@ const style = {
 };
 export default function DeleteCategory (props){
     const {category,getAllCategory,enviarMessage,categories,setCategories} = props
-
+    const navigate = useNavigate()
 
     const [open, setOpen] = React.useState(false);
     const [loading, setLoading] = useState(false);
@@ -54,14 +56,7 @@ export default function DeleteCategory (props){
         }
         catch(e){
             setLoading(false)
-            handleOpen()
-            if(e.response.status == 404) {
-                show_alert_danger(e.message)
-                getAllCategory()
-            }
-            else {
-                show_alert_danger(e.response.data.msg)
-            }
+            handleResponse(e,navigate,null,handleClose,getAllCategory)
      
         }
     }

@@ -15,6 +15,7 @@ import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import {categoryApi, labelsApi} from "../../../../apis/QueryAxios.jsx";
 import {useNavigate} from "react-router-dom";
+import {handleResponse} from "../../../../general/HandleResponse.jsx";
 
 
 
@@ -33,8 +34,8 @@ const style = {
     borderRadius: '8px' ,
 };
 export default function CreateLabels (props){
-    const {enviarMessage,categories,labels,setLabels} = props
-
+    const {enviarMessage,categories,labels,setLabels,getAllLabels} = props
+    const navigate = useNavigate()
     const [category,setcategory] = useState('')
     const [open, setOpen] = React.useState(false);
     const [loading, setLoading] = useState(false);
@@ -68,14 +69,7 @@ export default function CreateLabels (props){
         })
             .catch(error => {
                 setLoading(false)
-                if(error.response.status == 400) {
-                    setErrors(error.response.data.errors)
-                    console.log(error.response.data.errors)
-                }
-                else {
-                    handleClose()
-                    show_alert_danger(error.response.data.msg)
-                }
+                handleResponse(error,navigate,setErrors,handleClose,getAllLabels)
             })
     }
 

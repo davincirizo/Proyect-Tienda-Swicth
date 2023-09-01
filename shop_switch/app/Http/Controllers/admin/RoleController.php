@@ -17,7 +17,14 @@ class RoleController extends Controller
     }
     public function index(){
         $roles = RoleInherit::getPermissions();
-        return response()->json($roles,200);
+        $permissions = Permission::all();
+        $models = $permissions->pluck('models')->toArray();
+        $uniqueModels = collect($models)->unique()->values()->all();
+        return response()->json([
+            'roles'=>$roles,
+            'permissions'=>$permissions,
+            'models'=>$uniqueModels
+        ],200);
     }
 
     public function show(Role $role){

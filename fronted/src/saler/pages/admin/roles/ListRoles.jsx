@@ -85,6 +85,8 @@ function ListRoles() {
     const [page,setPage] = useState(1)
     const[search,setSearch] = useState("")
     const [order,setOrder] = useState('id')
+    const [allpermissions,setPermissions] = useState([])
+    const [modelsPermissions,setModelsPermissions] = useState([])
 
 
     const getAllRoles = async () =>{
@@ -97,11 +99,12 @@ function ListRoles() {
               'Authorization': `Bearer ${token}`
             }
           })
-          setLoading(false)
-          setRoles(response.data)
-          console.log(response.data)
-          setRolesFilter(response.data.slice(firstPage,lastPage))
-          setTotalPages(Math.ceil(response.data.length/usersxPage))
+            setLoading(false)
+            setRoles(response.data.roles)
+            setPermissions(response.data.permissions)
+            setModelsPermissions(response.data.models)
+            setRolesFilter(response.data.roles.slice(firstPage,lastPage))
+            setTotalPages(Math.ceil(response.data.length/usersxPage))
         }
         catch(e){
           setLoading(false)
@@ -317,6 +320,9 @@ function ListRoles() {
               <Box sx={styleButtonFloat}>
                   {storage.get('authUser').permisos.some(permiso => permiso == 'admin.roles.create') ?
                       (<CreateRole
+                          allpermissions={allpermissions}
+                          getAllRoles={getAllRoles}
+                          modelsPermissions={modelsPermissions}
                           setRoles={setRoles}
                           roles={roles}
                           enviarMessage={enviarMessage}/>):null}

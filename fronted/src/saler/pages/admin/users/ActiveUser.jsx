@@ -11,6 +11,8 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import {styled} from "@mui/material/styles";
 import { usersApi } from '../../../../apis/QueryAxios.jsx';
+import {handleResponse} from "../../../../general/HandleResponse.jsx";
+import {useNavigate} from "react-router-dom";
 
 
 const style = {
@@ -79,16 +81,14 @@ const IOSSwitch = styled((props) => (
 }));
 
 export default function ActiveUser (props){
-    const {user} = props
-    const {getAllUser} = props
-    const {enviarMessage} = props
+    const {user,getAllUser,enviarMessage,setUser,users} = props
     const [open, setOpen] = React.useState(false);
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate()
     const handleOpen = () => setOpen(true);
     const handleClose = () => {
         setOpen(false)
     }
-    const url = import.meta.env.VITE_BACKEND_URL
 
     const active_user = async (data) =>{
         const token = storage.get('authToken')
@@ -103,14 +103,12 @@ export default function ActiveUser (props){
                     }
                 }) 
             setLoading(false)
-            setOpen(false)
-            getAllUser()
+            handleClose()
+            setUser([...users.filter(user_filter => user_filter.id != user.id), res.data.user])
             enviarMessage(res.data.msg)
         }
         catch(e){
-            setLoading(false)
-            setOpen(false)
-            show_alert_danger(e.response.data.msg)
+           handleResponse(e,navigate,null,handleClose,getAllUser)
             }
         }
 

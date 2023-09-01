@@ -3,11 +3,12 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import {PulseLoader } from "react-spinners";
 import storage from "../../../../storage/Storage.jsx";
-import {show_alert_danger} from "../../../../general/notifications/ShowAlert.jsx";
 import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
 import Button from "@mui/material/Button";
-import {categoryApi, labelsApi} from '../../../../apis/QueryAxios.jsx';
+import {labelsApi} from '../../../../apis/QueryAxios.jsx';
 import { useState } from 'react';
+import {handleResponse} from "../../../../general/HandleResponse.jsx";
+import {useNavigate} from "react-router-dom";
 
 
 
@@ -29,9 +30,7 @@ const style = {
 };
 export default function DeleteLabels (props){
     const {label,getAllLabels,enviarMessage,setLabels,labels} = props
-
-    // const[message,Setmessage] = useState("")
-
+    const  navigate = useNavigate()
     const [open, setOpen] = React.useState(false);
     const [loading, setLoading] = useState(false);
     const handleOpen = () => setOpen(true);
@@ -49,25 +48,14 @@ export default function DeleteLabels (props){
                 }
             })
             setLoading(false)
-            setOpen(false)
+            handleClose()
             setLabels(labels.filter(label_filter => label_filter.id != label.id))
             enviarMessage(res.data.msg)
         }
         catch(e){
-            if(e.response.status == 404) {
-                show_alert_danger(e.message)
-                getAllLabels()
-            }
-            else {
-                setLoading(false)
-                handleClose()
-                show_alert_danger(e.response.data.msg)
-            }
-
-        }
-    }
-
-
+            setLoading(false)
+            handleResponse(e,navigate,null,handleClose,getAllLabels)
+        }}
 
     return(
         <>

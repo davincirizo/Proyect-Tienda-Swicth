@@ -30,6 +30,8 @@ import PhonelinkEraseIcon from '@mui/icons-material/PhonelinkErase';
 import NotFound from "../../../../general/NotFound.jsx";
 import {notification_succes} from "../../../../general/notifications/NotificationTostify.jsx";
 import {ToastContainer} from "react-toastify";
+import {useNavigate} from "react-router-dom";
+import {handleResponse} from "../../../../general/HandleResponse.jsx";
 
 const style = {
     position: 'relative',
@@ -48,9 +50,8 @@ const style = {
 
 
 export default function SessionsUser (props) {
-    const {user} = props
-    const {getAllUser} = props
-    const {enviarMessage} = props
+    const {user,getAllUser,enviarMessage} = props
+
 
 
     const [open, setOpen] = React.useState(false);
@@ -125,6 +126,7 @@ export default function SessionsUser (props) {
                                                 sendnotification={sendnotification}
                                                 handleClose={handleClose}
                                                 setLoading={setLoading}
+                                                getAllUser={getAllUser}
                                                 />
                                             </div>
                                         </ListItem>
@@ -146,7 +148,7 @@ export default function SessionsUser (props) {
 }
 function DeleteSession (props){
     const {session_id,user,sendnotification,handleClose,setLoading} = props
-
+    const navigate = useNavigate()
     const delete_session = async () =>{
         try {
             setLoading(true)
@@ -164,9 +166,7 @@ function DeleteSession (props){
             user.tokens  = user.tokens.filter(token => token.id != session_id);
         }
         catch (e){
-            setLoading(false)
-            handleClose()
-            show_alert_danger(e.response.data.msg)
+            handleResponse(e,navigate,null,handleClose,getAllUser)
         }
     }
 

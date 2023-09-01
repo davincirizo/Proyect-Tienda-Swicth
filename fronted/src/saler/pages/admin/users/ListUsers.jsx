@@ -24,6 +24,11 @@ import '../../../../css/Searching.css'
 import { usersApi } from '../../../../apis/QueryAxios'
 import NotFound from "../../../../general/NotFound.jsx";
 import SessionsUser from "./SessionsUser.jsx";
+import {handleResponse} from "../../../../general/HandleResponse.jsx";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -76,6 +81,8 @@ function ListUsers() {
   const [totalPages,setTotalPages] = useState(0)
   const [page,setPage] = useState(1)
   const[search,setSearch] = useState("")
+  const [order,setOrder] = useState('id')
+  const [roles,setRoles] = useState([])
 
 
   const enviarMessage = (msg) =>{
@@ -93,24 +100,36 @@ function ListUsers() {
         }
       })
       setLoading(false)
-      setUser(response.data)
-      setUserFilter(response.data.slice(firstPage,lastPage))
+      setUser(response.data.users)
+      setRoles(response.data.roles)
+      setUserFilter(response.data.users.slice(firstPage,lastPage))
       setTotalPages(Math.ceil(response.data.length/usersxPage))
 
 
     }
     catch(e){
       setLoading(false)
-      show_alert_danger(e.response.data.msg)
-      navigate('/')
+      handleResponse(e,navigate,null,null,getAllUser)
     }
 
   }
-  useEffect (() =>{
-    getAllUser()
-  },[])
 
-  const update_page = async (event,value,change=search,user_x_page = usersxPage) => {
+  const order_by = (filtrar,type_order) => {
+    const role_order = filtrar.sort((a,b) =>{
+      if(a[type_order] < b[type_order]){
+        return -1
+      }
+      if(a[type_order] > b[type_order]){
+        return 1
+      }
+      return 0
+    })
+    return role_order
+  }
+
+
+  const update_page = async (value,change,user_x_page,order_type ) => {
+    order_by(users,order_type)
     if(change) {
       const filter = change
       const user_filtered = users.filter((dato) =>
@@ -155,7 +174,6 @@ function ListUsers() {
         setUserFilter(users.slice(first, second))
       }
       setTotalPages(Math.ceil(users.length/user_x_page))
-
     }
     setPage(value)
   };
@@ -164,17 +182,32 @@ function ListUsers() {
   const searcher =  (e) => {
     setPage(1)
     setSearch(e.target.value)
-    let change = e.target.value
-    update_page(e,'1',change)
   }
 
   const update_user_xpage = (e) =>
   {
-    setusersxPage(e.target.value)
-    const user_x_page = e.target.value
-    update_page(e,'1',search,user_x_page)
-
+    if(e.target.value != 0) {
+      setusersxPage(e.target.value)
+      setPage(1)
+    }
   }
+
+  const changeOrderBy = (e) =>{
+    setOrder(e.target.value)
+  }
+  const onchange_page = (event,value) =>{
+    setPage(value)
+  }
+
+
+
+  useEffect (() =>{
+    getAllUser()
+  },[])
+
+  useEffect (() =>{
+    update_page(page,search,usersxPage,order)
+  },[search,usersxPage,page,users,order])
 
   return (
     <>
@@ -190,6 +223,26 @@ function ListUsers() {
         </div>
 
       </Typography>
+      <Box sx={{
+        top: '90px',
+        position: 'absolute',
+        right: '50px'}} >
+        <Box sx={{ minWidth: 120 }}>
+          <FormControl fullWidth>
+            <InputLabel id="demo-simple-select-label">Order By</InputLabel>
+            <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={order}
+                label="Order By"
+                onChange={changeOrderBy}
+            >
+              <MenuItem value='name'>Nombre</MenuItem>
+              <MenuItem value='id'>ID</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
+      </Box>
 
       {loading ? (
               <div style={{
@@ -229,6 +282,8 @@ function ListUsers() {
                       {storage.get('authUser') && storage.get('authUser').permisos.some(permiso => permiso == 'admin.users.update') ?
                         (<ActiveUser
                            user={user}
+                           users={users}
+                           setUser={setUser}
                            getAllUser={getAllUser}
                            enviarMessage={enviarMessage}
                        />):null}
@@ -254,9 +309,12 @@ function ListUsers() {
                         <Box sx={{ paddingLeft: 10 }}>
                           {storage.get('authUser') && storage.get('authUser').permisos.some(permiso => permiso == 'admin.users.update') ?
                             (<EditUser
-                            user={user}
-                            getAllUser={getAllUser}
-                            enviarMessage={enviarMessage}
+                                roles={roles}
+                                user={user}
+                                users={users}
+                                setUser={setUser}
+                                getAllUser={getAllUser}
+                                enviarMessage={enviarMessage}
                             />):null}
                         </Box>
                         <Box sx={{ paddingLeft: 10 }}>
@@ -278,7 +336,7 @@ function ListUsers() {
                   <input style={{width:'70px'}} className='input-group-text' type='number' value={usersxPage} onChange={update_user_xpage}/>
                 </div>
               </Typography>
-              <Pagination variant="outlined" count={totalPages} onChange={update_page} page={page}/>
+              <Pagination variant="outlined" count={totalPages} onChange={onchange_page} page={page}/>
             </Stack>
            
 

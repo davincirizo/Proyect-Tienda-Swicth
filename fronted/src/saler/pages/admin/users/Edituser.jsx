@@ -13,6 +13,8 @@ import SaveIcon from '@mui/icons-material/Save';
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import { usersApi } from '../../../../apis/QueryAxios.jsx';
+import {handleResponse} from "../../../../general/HandleResponse.jsx";
+import {useNavigate} from "react-router-dom";
 
 
 const style = {
@@ -29,9 +31,7 @@ const style = {
     borderRadius: '8px' ,
 };
 export default function EditUser (props) {
-    const {user} = props
-    const {getAllUser} = props
-    const {enviarMessage} = props
+    const {user,setUser,users,getAllUser,enviarMessage,roles} = props
 
     const [role_user,setRoleUser] = useState([])
 
@@ -41,20 +41,18 @@ export default function EditUser (props) {
     const handleOpen = () => {
         setOpen(true)
         const roleIds = role_user.map(role => role.id);
-        // role_user.map(role => {
         setRoleSelect(roleIds);
-        // });
-        console.log(role_select)
+        setRoleUser(user.roles)
+
     }
     const handleClose = () => {
         setOpen(false)
         setRoleSelect([])
     }
-    const url = import.meta.env.VITE_BACKEND_URL
 
     const [role_select,setRoleSelect] = useState([])
     const {register, handleSubmit} = useForm()
-    const [roles,setRoles] = useState([])
+    const navigate = useNavigate()
     const edit_user = async (data) => {
         const token = storage.get('authToken')
         try {
@@ -68,36 +66,15 @@ export default function EditUser (props) {
             })
             setLoading(false)
             handleClose()
-            getAllUser()
+            setUser([...users.filter(user_filter => user_filter.id != user.id), res.data.user])
             enviarMessage(res.data.msg)
 
         } catch (e) {
             setLoading(false)
-            setOpen(false)
-            show_alert_danger(e.response.data.msg)
+            handleResponse(e,navigate,null,handleClose,getAllUser)
 
         }
     }
-
-    const get_all_roles = async (data) =>{
-        const token = storage.get('authToken')
-        try {
-            const res = await axios.get(`${url}/admin/roles`,
-                {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                }
-            )
-            setRoles(res.data)
-        } catch (e) {
-            show_alert_danger(e.response.data.msg)
-        }
-    }
-    useEffect (() =>{
-        get_all_roles()
-        setRoleUser(user.roles)
-    },[])
 
     const checkBoxRole =  (e)=>{
         const {value,checked} = e.target
