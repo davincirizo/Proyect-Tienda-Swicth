@@ -17,6 +17,7 @@ import List from '@mui/material/List';
 import ListSubheader from '@mui/material/ListSubheader';
 import TravelExploreIcon from "@mui/icons-material/TravelExplore.js";
 import NotFound from '../../../../general/NotFound.jsx';
+import {handleResponse} from "../../../../general/HandleResponse.jsx";
 
 
 const style = {
@@ -36,14 +37,12 @@ const styleButtonFloat = {
     paddingTop: 2,
 };
 function EditRole(props) {
-    const {role,enviarMessage,getAllRoles,roles,setRoles} = props
+    const {role,enviarMessage,getAllRoles,roles,setRoles,allpermissions,modelsPermissions} = props
     const [open, setOpen] = React.useState(false);
     const [loading, setLoading] = useState(false);
     const [errors,setErrors] = useState([]);
     const { register, handleSubmit,setValue } = useForm()
-    const [allpermissions,setPermissions] = useState([])
-    const [filter_permissions,setFilter_permissions] = useState([])
-    const [modelsPermissions,setModelsPermissions] = useState([])
+    const [filter_permissions,setFilter_permissions] = useState(allpermissions)
     const [permissionsSelected,setPermissionsSelected] = useState([])
     const navigate = useNavigate()
     const[search,setSearch] = useState("")
@@ -52,6 +51,7 @@ function EditRole(props) {
         setOpen(true)
         const permissionsIds = role.permissions.map(permission => permission.id)
         setPermissionsSelected(permissionsIds)
+        setValue("name",role.name)
 
     };
     const handleClose = () => {
@@ -79,44 +79,11 @@ function EditRole(props) {
         }
         catch (e){
             setLoading(false)
-
-            if(e.response.status == 400) {
-                setErrors(e.response.data.errors)
-            }
-            if(e.response.status == 404) {
-                handleClose()
-                show_alert_danger(e.message)
-                getAllRoles()
-            }
-            else {
-                setOpen(false)
-                show_alert_danger(e.response.data.msg)
-            }
+           handleResponse(e,navigate,setErrors,handleClose,getAllRoles)
 
         }
     }
 
-    const getAll_permission = async () => {
-        try {
-            setLoading(true)
-            const token = storage.get('authToken')
-            const response = await permissionsApi.get('', {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            })
-            setPermissions(response.data.permission)
-            setFilter_permissions(response.data.permission)
-            setModelsPermissions(response.data.models)
-            setLoading(false)
-
-        }
-        catch(e){
-            setLoading(false)
-            show_alert_danger(e.response.data.msg)
-            navigate('/')
-        }
-    }
 
     const checkBoxRole =  (e)=>{
         const {value,checked} = e.target
@@ -137,10 +104,6 @@ function EditRole(props) {
         console.log(filter_permissions)
     }
 
-    useEffect (() =>{
-        setValue("name",role.name)
-        getAll_permission()
-    },[])
 
   return (
     <>

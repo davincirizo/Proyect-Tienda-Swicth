@@ -112,7 +112,8 @@ function ListLabels() {
         setTotalPages(Math.ceil(response.data.length/usersxPage))
     }
     catch(e){
-      handleResponse(e,navigate,null,null,getAllLabels)
+        setLoading(false)
+        handleResponse(e,navigate,null,null,getAllLabels)
     }
 
   }

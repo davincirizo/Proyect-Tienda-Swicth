@@ -290,6 +290,8 @@ function ListRoles() {
                                 role={role}
                                 setRoles={setRoles}
                                 roles={roles}
+                                modelsPermissions={modelsPermissions}
+                                allpermissions={allpermissions}
                                 getAllRoles={getAllRoles}
                                 enviarMessage={enviarMessage}
                                 />):null}

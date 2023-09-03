@@ -188,7 +188,7 @@ function CreateRole(props) {
                                                             <Checkbox
                                                                 value={permission.id}
                                                                 onChange={checkBoxRole}
-                                                                checked={permissionsSelected.map(r => r).includes(permission.id)}
+                                                                
                                                             />
                                                         </div>):null
 
