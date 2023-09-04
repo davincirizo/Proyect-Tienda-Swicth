@@ -13,6 +13,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import SwipeableTemporaryDrawer from './Drewer';
 import './file.css'
+import {Link} from "react-router-dom";
 
 
 export default function NavBarSaler() {
@@ -58,6 +59,7 @@ export default function NavBarSaler() {
     >
       <MenuItem onClick={handleMenuClose}>Usuario</MenuItem>
       <MenuItem onClick={handleMenuClose}>Cerrar Sesion</MenuItem>
+      <MenuItem><Link to='/'>Home</Link></MenuItem>
     </Menu>
   );
 

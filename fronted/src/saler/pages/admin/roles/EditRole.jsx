@@ -101,7 +101,6 @@ function EditRole(props) {
             dato.description.toLowerCase().includes(value.toLocaleLowerCase())
         )
         setFilter_permissions(permissions_filtered)
-        console.log(filter_permissions)
     }
 
 

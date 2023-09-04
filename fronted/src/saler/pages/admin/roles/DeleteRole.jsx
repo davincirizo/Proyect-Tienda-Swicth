@@ -8,6 +8,8 @@ import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
 import Button from "@mui/material/Button";
 import { roleApi} from '../../../../apis/QueryAxios.jsx';
 import { useState } from 'react';
+import {handleResponse} from "../../../../general/HandleResponse.jsx";
+import {useNavigate} from "react-router-dom";
 
 
 
@@ -31,7 +33,7 @@ export default function DeleteRole(props){
     const {role,getAllRoles,enviarMessage,roles,setRoles} = props
     const [open, setOpen] = React.useState(false);
     const [loading, setLoading] = useState(false);
-
+    const navigate = useNavigate()
     const handleOpen = () => setOpen(true);
     const handleClose = () => {
         setOpen(false)
@@ -52,16 +54,8 @@ export default function DeleteRole(props){
             enviarMessage(res.data.msg)
         }
         catch(e){
-            if(e.response.status == 404) {
-                show_alert_danger(e.message)
-                getAllRoles()
-            }
-            else {
-                setLoading(false)
-                handleClose()
-                show_alert_danger(e.response.data.msg)
-            }
-
+            setLoading(false)
+            handleResponse(e,navigate,null,handleClose,getAllRoles)
         }
     }
 

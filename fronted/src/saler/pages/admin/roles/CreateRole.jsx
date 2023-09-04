@@ -188,7 +188,6 @@ function CreateRole(props) {
                                                             <Checkbox
                                                                 value={permission.id}
                                                                 onChange={checkBoxRole}
-                                                                
                                                             />
                                                         </div>):null
 
