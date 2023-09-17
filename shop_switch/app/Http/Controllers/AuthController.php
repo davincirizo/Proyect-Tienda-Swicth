@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PersonalAccessTokenInherit;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -102,12 +103,12 @@ class AuthController extends Controller
             ],400);
         }
         $user = User::where('email', $request->email)->first();
-        if(!$user){
-            return response()->json([
-                'status' => false,
-                'msg' => 'Usuario o contrasenna incorrecta',
-            ],401);
-        }
+//        if(!$user){
+//            return response()->json([
+//                'status' => false,
+//                'msg' => 'Usuario o contrasenna incorrecta',
+//            ],401);
+//        }
 
         if (! $user || ! Hash::check($request->password, $user->password)) {
             return response()->json([
@@ -150,7 +151,6 @@ class AuthController extends Controller
             ],400);
         }
     }
-
 
     public function logout(Request $request){
         $token = $request->bearerToken();
@@ -234,9 +234,25 @@ class AuthController extends Controller
 
     }
 
-    public function update_usage_token(){
-        
+    public function profileGetDevices(User $user,Request $request){
+        $token = $request->bearerToken();
+        $access = PersonalAccessToken::findToken($token);
+        $user_token = User::where('email', '=', $access->name)->first();
+        if($user_token != $user ){
+            return response()->json([
+                'msg' => 'Forbidden'
+            ], 403);
+        }
+        return response()->json([
+            'devices'=>$user->tokens
+        ]);
+
     }
+
+    public function delete_session(PersonalAccessTokenInherit  $token){
+        return $token->delete_token_user();
+    }
+
 
 
 

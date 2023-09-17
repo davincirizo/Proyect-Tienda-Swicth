@@ -1,37 +1,20 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
-import { useForm } from "react-hook-form"
-import axios from "axios"
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import {PulseLoader } from "react-spinners";
 import storage from "../../../../storage/Storage.jsx";
-import {show_alert_danger} from "../../../../general/notifications/ShowAlert.jsx";
-import Checkbox from '@mui/material/Checkbox';
-import SaveIcon from '@mui/icons-material/Save';
-import Typography from "@mui/material/Typography";
-import Divider from "@mui/material/Divider";
 import { usersApi } from '../../../../apis/QueryAxios.jsx';
 import InputIcon from '@mui/icons-material/Input';
-import Grid from '@mui/material/Grid';
-import { styled } from '@mui/material/styles';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import FolderIcon from '@mui/icons-material/Folder';
-import DeleteIcon from '@mui/icons-material/Delete';
-import IconButton from "@mui/material/IconButton";
-import Avatar from '@mui/material/Avatar';
-import ListSubheader from "@mui/material/ListSubheader";
 import LaptopWindowsIcon from '@mui/icons-material/LaptopWindows';
 import PhonelinkEraseIcon from '@mui/icons-material/PhonelinkErase';
 import NotFound from "../../../../general/NotFound.jsx";
 import {notification_succes} from "../../../../general/notifications/NotificationTostify.jsx";
-import {ToastContainer} from "react-toastify";
 import {useNavigate} from "react-router-dom";
 import {handleResponse} from "../../../../general/HandleResponse.jsx";
+import axios from "axios";
 
 const style = {
     position: 'relative',
@@ -50,15 +33,18 @@ const style = {
 
 
 export default function SessionsUser (props) {
-    const {user,getAllUser,enviarMessage} = props
+    const {user,getAllUser} = props
 
-
+    const [tokens,setTokens] = useState([])
 
     const [open, setOpen] = React.useState(false);
 
     const [loading, setLoading] = useState(false);
+
+    const navigate = useNavigate()
     const handleOpen = () => {
         setOpen(true)
+        show_sessions()
     }
     const handleClose = () => {
         setOpen(false)
@@ -68,6 +54,22 @@ export default function SessionsUser (props) {
         notification_succes(msg)
     }
 
+    const show_sessions = async () =>{
+        try{
+            setLoading(true)
+            const res = await usersApi.get(`/show_tokens/${user.id}`,{
+                headers: {
+                    'Authorization': `Bearer ${storage.get('authToken')}`
+                }
+            })
+            setLoading(false)
+            setTokens(res.data.tokens)
+            console.log(res)
+        }
+        catch (e){
+            handleResponse(e,navigate,null,handleClose,getAllUser)
+        }
+    }
 
 
     return (
@@ -97,7 +99,7 @@ export default function SessionsUser (props) {
                             </div>
                         ) :
                         <div>
-                            {user.tokens.length !=0 ?(
+                            {tokens.length !=0 ?(
                             <List
                                 sx={{
                                     width: '100%',
@@ -110,7 +112,7 @@ export default function SessionsUser (props) {
 
                                 }}>
                                 <ul>
-                                    {user.tokens.map(session => (
+                                    {tokens.map(session => (
                                         <ListItem key={session.id}>
                                             <div>
                                                 <LaptopWindowsIcon/>
@@ -147,15 +149,13 @@ export default function SessionsUser (props) {
     )
 }
 function DeleteSession (props){
-    const {session_id,user,sendnotification,handleClose,setLoading} = props
+    const {session_id,user,sendnotification,handleClose,setLoading,getAllUser} = props
     const navigate = useNavigate()
     const delete_session = async () =>{
         try {
             setLoading(true)
 
-            const res = await usersApi.put(`/${user.id}`, {
-                token_id: session_id
-            }, {
+            const res = await usersApi.delete(`/delete_token/${session_id}`,  {
                 headers: {
                     'Authorization': `Bearer ${storage.get('authToken')}`
                 }
@@ -166,6 +166,8 @@ function DeleteSession (props){
             user.tokens  = user.tokens.filter(token => token.id != session_id);
         }
         catch (e){
+            console.log(e)
+            setLoading(false)
             handleResponse(e,navigate,null,handleClose,getAllUser)
         }
     }

@@ -15,13 +15,12 @@ import SwipeableTemporaryDrawer from './Drewer';
 import Register from '../../auth/Register';
 import LoginUser from "../../auth/Login.jsx";
 import storage from "../../storage/Storage.jsx";
-// import {useAuthContext} from "../../context/TokenContext.jsx";
-import {Link, useNavigate} from "react-router-dom";
-import axios from "axios"
-import {show_alert_danger, show_alert_succes} from "../../general/notifications/ShowAlert.jsx";
+import {Link} from "react-router-dom";
 import {useState} from "react";
 import {PulseLoader} from "react-spinners";
 import ForgotPasswordForm from "../../auth/ForgotPasswordForm.jsx";
+import Logout from "../../auth/Logout.jsx";
+import Profile from "../../auth/Profile.jsx";
 
 
 
@@ -31,39 +30,9 @@ export default function NavBarUser() {
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-
-  const navigate = useNavigate()
-  const url = import.meta.env.VITE_BACKEND_URL
   const [loading, setLoading] = useState(false);
 
-  const logout = async()=>{
-    const user = storage.get('authUser')
-    const token_id = storage.get('authToken')
-    try {
-      setLoading(true)
-      const res = await axios.post(`${url}/logout`, {
-        user: user
-      }, {
-        headers: {
-          'Authorization': `Bearer ${token_id}`
-        }
-      });
-      storage.remove('authToken');
-      storage.remove('authUser');
-      setLoading(false)
-      show_alert_succes(res.data.msg)
-      navigate('/')
-    }
-    catch (e){
-      setLoading(false)
-      show_alert_danger(e.response.data.msg)
-    }
-
-
-
-
-
-  }
+  // }
 
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -95,8 +64,12 @@ export default function NavBarUser() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Perfil</MenuItem>
-      <MenuItem onClick={logout}>Cerrar Sesion</MenuItem>
+      <Profile
+          handleMenuClose={handleMenuClose}
+      />
+        <Logout
+            setLoading={setLoading}
+        />
       <Link to='/saler/dashboardSaler'>
         <MenuItem>Admin</MenuItem>
       </Link>

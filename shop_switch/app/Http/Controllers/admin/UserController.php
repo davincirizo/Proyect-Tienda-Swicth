@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\PersonalAccessTokenInherit;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
@@ -12,15 +13,13 @@ class UserController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth-verify-role')->only('index','update','destroy','show');
+        $this->middleware('auth-verify-role')->only('index','update','destroy','show','delete_token','show_token','active_user');
     }
+
     public function index(){
-        $users = User::all();
         $roles = Role::all();
-        for($i = 0; $i < count($users); $i++){
-            $users[$i]->roles;
-            $users[$i]->tokens;
-        }
+        $users = User::all();
+
         return response()->json([
             'users'=>$users,
             'roles'=>$roles
@@ -29,39 +28,6 @@ class UserController extends Controller
     }
 
     public function update(Request $request,User $user){
-        if($request->has('active')){
-            if($request->active == 1){
-                $user->active = false;
-                $user->tokens()->delete();
-            }
-            else{
-                $user->active = true;
-            }
-            $user->save();
-            $user->tokens;
-            $user->roles;
-            return response()->json([
-                'res' => true,
-                'msg' => 'Usuario actualizado correctamente',
-                'user'=>$user
-            ],200);
-        }
-        if($request->has('token_id')){
-            $token = PersonalAccessToken::where('id','=',$request->token_id)->first();
-            if($token) {
-                $token->delete();
-                return response()->json([
-                    'res' => true,
-                    'msg' => 'Session cerrada correctamente correctamente',
-                ], 200);
-            }
-            else{
-                return response()->json([
-                    'res' => true,
-                    'msg' => 'Esta session esta cerrrada',
-                ], 400);
-            }
-        }
         if($request->has('roles')){
             if(!$request->roles){
                 return response()->json([
@@ -71,8 +37,7 @@ class UserController extends Controller
             }
             else{
                 $user->roles()->sync($request->roles);
-                $user->tokens;
-                $user->roles;
+                $user->refresh();
                 return response()->json([
                     'res' => true,
                     'msg' => 'Usuario actualizado correctamente',
@@ -94,6 +59,34 @@ class UserController extends Controller
             'res' => true,
             'msg' => 'Usuario eliminado correctamente',
         ],200);
+    }
+
+    public function delete_token(PersonalAccessTokenInherit $token){
+        return $token->delete_token_user();
+    }
+
+    public function show_token(User $user){
+        $tokens = $user->tokens;
+        return response()->json([
+            'res' => true,
+            'tokens' => $tokens,
+        ], 200);
+    }
+
+    public function active_user(User $user,Request $request){
+            if($request->active == 1){
+                $user->active = false;
+                $user->tokens()->delete();
+            }
+            else{
+                $user->active = true;
+            }
+            $user->save();
+            return response()->json([
+                'res' => true,
+                'msg' => 'Usuario activado correctamente',
+                'user'=>$user
+            ],200);
     }
 
 }

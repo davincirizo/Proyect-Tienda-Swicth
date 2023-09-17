@@ -13,6 +13,8 @@ import storage from "../storage/Storage.jsx";
 import {PulseLoader } from "react-spinners";
 import {useNavigate} from "react-router-dom";
 import ForgotPasswordForm from "./ForgotPasswordForm.jsx";
+import {loginApi} from "../apis/QueryAxios.jsx";
+import {handleResponse} from "../general/HandleResponse.jsx";
 
 
 
@@ -38,15 +40,10 @@ export default function LoginUser (){
         setErrors([])
     }
     const [errors,setErrors] = useState([]);
-
-    const url = import.meta.env.VITE_BACKEND_URL
     const url_native = import.meta.env.VITE_BACKEND_URL_native
     const navigate = useNavigate()
 
     const { register, handleSubmit } = useForm()
-    // console.log(storage.get('authToken'))
-    // storage.remove('authToken')
-    // storage.remove('authUser')
 
     const csrf = async()=>{
         await axios.get(`${url_native}/sanctum/csrf-cookie`);
@@ -56,7 +53,7 @@ export default function LoginUser (){
         try{
             setLoading(true)
             await csrf();
-            const res = await axios.post(`${url}/login`,{
+            const res = await loginApi.post(``,{
                 email:data.email,
                 password:data.password,
                 }
@@ -74,17 +71,9 @@ export default function LoginUser (){
         }
         catch(e){
             setLoading(false)
-            if(e.response.status == 400) {
-                setErrors(e.response.data.errors)
-            }
-            else {
-                setOpen(false)
-                show_alert_danger(e.response.data.msg)
-            }
+            handleResponse(e,navigate,setErrors,handleClose,null)
         }
     }
-
-
 
     return(
         <>

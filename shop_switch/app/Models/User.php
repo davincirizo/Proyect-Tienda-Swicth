@@ -8,6 +8,8 @@ use App\Mail\VerifyUser;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+//use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
@@ -15,6 +17,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+
 
 
 
@@ -27,6 +30,14 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
+    protected static function booted()
+    {
+        static::addGlobalScope('roles', function (Builder $builder) {
+            $builder->with('roles');
+        });
+
+    }
+
     protected $fillable = [
         'name',
         'email',
@@ -54,6 +65,18 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+//    public static function all($columns = ['*'])
+//    {
+//        $users = parent::all();
+//        $users->map(function ($user){
+//            $user->roles;
+//            return $user;
+//        });
+//
+//
+//        return $users;
+//    }
+
 
     public function sendEmailVerification(){
         $token = Str::random(64);
@@ -102,8 +125,8 @@ class User extends Authenticatable
         return $this->permisos = $permisos;
     }
 
-
     public function products(){
         return $this->hasMany('App\Models\Product');
     }
+
 }

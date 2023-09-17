@@ -38,21 +38,24 @@ export default function EditUser (props) {
     const [open, setOpen] = React.useState(false);
 
     const [loading, setLoading] = useState(false);
+
+    const [role_select,setRoleSelect] = useState([])
+
+    const navigate = useNavigate()
+
+
     const handleOpen = () => {
         setOpen(true)
-        const roleIds = role_user.map(role => role.id);
-        setRoleSelect(roleIds);
         setRoleUser(user.roles)
-
+        const roleIds = user.roles.map(role => role.id);
+        setRoleSelect(roleIds);
     }
     const handleClose = () => {
         setOpen(false)
         setRoleSelect([])
     }
 
-    const [role_select,setRoleSelect] = useState([])
-    const {register, handleSubmit} = useForm()
-    const navigate = useNavigate()
+    const { handleSubmit} = useForm()
     const edit_user = async (data) => {
         const token = storage.get('authToken')
         try {
@@ -65,6 +68,7 @@ export default function EditUser (props) {
                 } 
             })
             setLoading(false)
+            console.log(res.data.user)
             handleClose()
             setUser([...users.filter(user_filter => user_filter.id != user.id), res.data.user])
             enviarMessage(res.data.msg)
@@ -84,7 +88,7 @@ export default function EditUser (props) {
         else{
             setRoleSelect(role_select.filter(o=> o!=value))
         }
-        console.log(role_select)
+
     }
     return (
         <>

@@ -14,9 +14,15 @@ import MoreIcon from '@mui/icons-material/MoreVert';
 import SwipeableTemporaryDrawer from './Drewer';
 import './file.css'
 import {Link} from "react-router-dom";
+import Logout from "../../auth/Logout.jsx";
+import {PulseLoader} from "react-spinners";
+import {useState} from "react";
+import Profile from "../../auth/Profile.jsx";
 
 
 export default function NavBarSaler() {
+  const [loading, setLoading] = useState(false);
+
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
@@ -57,8 +63,13 @@ export default function NavBarSaler() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Usuario</MenuItem>
-      <MenuItem onClick={handleMenuClose}>Cerrar Sesion</MenuItem>
+      <Profile
+          handleMenuClose={handleMenuClose}
+      />
+
+      <Logout
+            setLoading={setLoading}
+        />
       <MenuItem><Link to='/'>Home</Link></MenuItem>
     </Menu>
   );
@@ -117,6 +128,7 @@ export default function NavBarSaler() {
   );
 
   return (
+      <>
     <Box sx={{ flexGrow: 1 }}>
       <AppBar sx={{background:"#063970"}}>
         <Toolbar>
@@ -182,5 +194,19 @@ export default function NavBarSaler() {
       {renderMobileMenu}
       {renderMenu}
     </Box>
+  {loading &&
+  <div style={{
+    position: 'absolute',
+    left: '50%',
+    top:'50%',
+    transform: 'translateX(-50%)'}}>
+
+    <PulseLoader
+
+        size={40}
+        color="#1C0E74"
+    />
+  </div>}
+      </>
   );
 }

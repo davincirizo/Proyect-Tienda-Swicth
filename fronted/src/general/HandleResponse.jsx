@@ -14,6 +14,7 @@ export function handleResponse(response,navigate,setErrors=null,handleClose=null
     }
     if (response.response.status === 401) {
         storage.clear()
+        handleClose()
         show_alert_danger(response.response.data.msg)
         navigate('/')
     }

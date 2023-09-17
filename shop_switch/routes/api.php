@@ -33,6 +33,9 @@ Route::post('verify_token',[AuthController::class,'verify_token']);
 
 Route::group(['middleware' => ['auth-user']],function(){
     Route::post('logout',[AuthController::class,'logout']);
+    Route::get('profile/getDevices/{user}',[AuthController::class,'profileGetDevices']);
+    Route::delete('profile/delete_session/{token}',[AuthController::class,'delete_session']);
+
     Route::get('admin/categories',[CategoryController::class,'index'])->name('admin.categories.index');
     Route::post('admin/categories',[CategoryController::class,'store'])->name('admin.categories.store');
     Route::put('admin/categories/{category}/',[CategoryController::class,'update'])->name('admin.categories.update');
@@ -42,6 +45,10 @@ Route::group(['middleware' => ['auth-user']],function(){
     Route::put('admin/users/{user}/',[UserController::class,'update'])->name('admin.users.update');
     Route::delete('admin/users/{user}/',[UserController::class,'destroy'])->name('admin.users.destroy');
     Route::get('admin/users/{user}/',[UserController::class,'show'])->name('admin.users.show');
+
+    Route::delete('admin/users/delete_token/{token}/',[UserController::class,'delete_token'])->name('admin.users.delete_token');
+    Route::get('admin/users/show_tokens/{user}',[UserController::class,'show_token'])->name('admin.users.show_tokens');
+    Route::put('admin/users/active_user/{user}',[UserController::class,'active_user'])->name('admin.users.active_user');
 
 
     Route::get('admin/roles',[RoleController::class,'index'])->name('admin.roles.index');

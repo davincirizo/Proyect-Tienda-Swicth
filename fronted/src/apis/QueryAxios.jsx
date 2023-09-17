@@ -25,3 +25,15 @@ export const labelsApi = axios.create({
     baseURL:`${backend}/admin/labels`,
     timeout: 30000,
 })
+export const logoutApi = axios.create({
+    baseURL:`${backend}/logout`,
+    timeout: 30000,
+})
+export const loginApi = axios.create({
+    baseURL:`${backend}/login`,
+    timeout: 30000,
+})
+export const profileApi = axios.create({
+    baseURL:`${backend}/profile`,
+    timeout: 30000,
+})

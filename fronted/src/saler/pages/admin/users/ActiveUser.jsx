@@ -95,7 +95,7 @@ export default function ActiveUser (props){
 
         try{
             setLoading(true)
-            const res = await usersApi.put(`/${user.id}`,{
+            const res = await usersApi.put(`/active_user/${user.id}`,{
                 active:user.active,
                 },{
                     headers: {
