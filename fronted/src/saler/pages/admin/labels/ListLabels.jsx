@@ -319,7 +319,7 @@ function ListLabels() {
                       <Box display="flex">
 
                       <Box sx={{ paddingLeft: 10 }}>
-                          {storage.get('authUser').permisos.some(permiso => permiso == 'admin.labels.update') ?
+                          {storage.get('authUser') && storage.get('authUser').roles.some(role => role.permissions.some(permission => permission.name  == 'admin.labels.update')) ?
                               (<EditLabels
                                 label={label}
                                 labels={labels}
@@ -330,13 +330,13 @@ function ListLabels() {
                         />):null}
                       </Box>
                       <Box sx={{ paddingLeft: 10 }}>
-                          {storage.get('authUser').permisos.some(permiso => permiso == 'admin.labels.destroy') ?
-                        (<DeleteLabels
-                            label={label}
-                            labels={labels}
-                            setLabels={setLabels}
-                            getAllLabels={getAllLabels}
-                            enviarMessage={enviarMessage}/>):null}
+                          {storage.get('authUser') && storage.get('authUser').roles.some(role => role.permissions.some(permission => permission.name  == 'admin.labels.destroy')) ?
+                            (<DeleteLabels
+                                label={label}
+                                labels={labels}
+                                setLabels={setLabels}
+                                getAllLabels={getAllLabels}
+                                enviarMessage={enviarMessage}/>):null}
                          </Box>
                       </Box>
 
@@ -357,7 +357,7 @@ function ListLabels() {
               <Pagination variant="outlined" count={totalPages} page={page} onChange={onchange_page} />
             </Stack>
             <Box sx={styleButtonFloat}>
-                {storage.get('authUser').permisos.some(permiso => permiso == 'admin.labels.create') ?
+                {storage.get('authUser') && storage.get('authUser').roles.some(role => role.permissions.some(permission => permission.name  == 'admin.labels.create')) ?
               (<CreateLabels
                   getAllLabels={getAllLabels}
                   labels={labels}

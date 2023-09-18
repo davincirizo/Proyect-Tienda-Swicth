@@ -3,13 +3,20 @@ import * as React from "react";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import List from "@mui/material/List";
-import NotFound from "../general/NotFound.jsx";
+import NotFound from "../../general/NotFound.jsx";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import {styled} from "@mui/material/styles";
 import TableCell, {tableCellClasses} from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
 import PhonelinkEraseIcon from "@mui/icons-material/PhonelinkErase.js";
+import {useNavigate} from "react-router-dom";
+import {profileApi, usersApi} from "../../apis/QueryAxios.jsx";
+import storage from "../../storage/Storage.jsx";
+import {handleResponse} from "../../general/HandleResponse.jsx";
+import {useState} from "react";
+import {PulseLoader} from "react-spinners";
+import {show_alert_warning} from "../../general/notifications/ShowAlert.jsx";
 
 const style = {
     position: 'relative',
@@ -52,9 +59,9 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 
 
 export default function DevicesUser(props){
-    const {devices} = props
+    const {devices,setDevice} = props
     const [open, setOpen] = React.useState(false)
-    console.log(devices)
+    const [loading, setLoading] = useState(false);
     const handleOpen = () => {
         setOpen(true)
     }
@@ -62,9 +69,6 @@ export default function DevicesUser(props){
         setOpen(false)
     }
 
-    const delete_session = async()=>{
-
-    }
 
     return(
         <>
@@ -75,6 +79,20 @@ export default function DevicesUser(props){
                 open={open}
                 onClose={handleClose}>
                 <Box sx={style}>
+                    {loading ? (<div style={{
+                                position: 'absolute',
+                                left: '50%',
+                                top: '50%',
+                                transform: 'translateX(-50%)'
+                            }}>
+
+                                <PulseLoader
+
+                                    size={40}
+                                    color="#1C0E74"
+                                />
+                            </div>
+                        ):
                     <div>
                         {devices.length !=0 ?(
                                 <List
@@ -98,9 +116,12 @@ export default function DevicesUser(props){
                                                                 {device.info}
                                                             </StyledTableCell>
                                                             <StyledTableCell component="th" scope="row">
-                                                                <div onClick={delete_session}>
-                                                                    <PhonelinkEraseIcon/>
-                                                                </div>
+                                                               <DeleteSession
+                                                                   session_id={device.id}
+                                                                   setLoading={setLoading}
+                                                                   setDevice={setDevice}
+                                                                   devices={devices}
+                                                               />
                                                                 </StyledTableCell>
                                                     </StyledTableRow>
                                         ))}
@@ -115,9 +136,40 @@ export default function DevicesUser(props){
                             <div style={{marginLeft:'210px',marginTop:'150px'}}>
                                 <NotFound/>
                             </div>}
-                    </div>
+                    </div>}
                 </Box>
             </Modal>
         </>
+    )
+}
+
+function DeleteSession (props){
+    const {session_id,setLoading,setDevice,devices} = props
+    const navigate = useNavigate()
+    const delete_session = async () =>{
+        try {
+            setLoading(true)
+
+            const res = await profileApi.delete(`/delete_session/${session_id}`,  {
+                headers: {
+                    'Authorization': `Bearer ${storage.get('authToken')}`
+                }
+            })
+            setLoading(false)
+            show_alert_warning(res.data.msg)
+            setDevice(devices.filter(token => token.id != session_id))
+        }
+        catch (e){
+            handleResponse(e,navigate,null)
+        }
+    }
+
+
+    return(
+        <div onClick={delete_session}>
+
+            <PhonelinkEraseIcon/>
+        </div>
+
     )
 }

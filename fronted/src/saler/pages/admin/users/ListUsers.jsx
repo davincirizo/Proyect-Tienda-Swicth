@@ -109,7 +109,7 @@ function ListUsers() {
     }
     catch(e){
       setLoading(false)
-      handleResponse(e,navigate,null,null,getAllUser)
+      handleResponse(e,navigate)
     }
 
   }
@@ -279,7 +279,7 @@ function ListUsers() {
                       {user.id}
                     </StyledTableCell>
                     <StyledTableCell align="center">
-                      {storage.get('authUser') && storage.get('authUser').permisos.some(permiso => permiso == 'admin.users.update') ?
+                      {storage.get('authUser') && storage.get('authUser').roles.some(role => role.permissions.some(permission => permission.name  == 'admin.users.active_user')) ?
                         (<ActiveUser
                            user={user}
                            users={users}
@@ -307,8 +307,8 @@ function ListUsers() {
                       {/*<Box display="flex">*/}
                       <Box display="flex">
                         <Box sx={{ paddingLeft: 10 }}>
-                          {storage.get('authUser') && storage.get('authUser').permisos.some(permiso => permiso == 'admin.users.update') ?
-                            (<EditUser
+                          {storage.get('authUser') && storage.get('authUser').roles.some(role => role.permissions.some(permission => permission.name  == 'admin.users.update')) ?
+                              (<EditUser
                                 roles={roles}
                                 user={user}
                                 users={users}
@@ -318,11 +318,12 @@ function ListUsers() {
                             />):null}
                         </Box>
                         <Box sx={{ paddingLeft: 10 }}>
-                          <SessionsUser
-                              user={user}
-                              getAllUser={getAllUser}
-                              enviarMessage={enviarMessage}
-                          />
+                          {storage.get('authUser') && storage.get('authUser').roles.some(role => role.permissions.some(permission => permission.name  == 'admin.users.show_tokens')) ?
+                            (<SessionsUser
+                                user={user}
+                                getAllUser={getAllUser}
+                                enviarMessage={enviarMessage}
+                            />):null}
                         </Box>
                       </Box>
                     </StyledTableCell>

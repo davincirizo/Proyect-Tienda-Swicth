@@ -122,14 +122,15 @@ export default function SessionsUser (props) {
                                             </div>
 
                                             <div  style={{marginLeft:'10px'}}>
-                                                <DeleteSession
-                                                session_id={session.id}
-                                                user={user}
-                                                sendnotification={sendnotification}
-                                                handleClose={handleClose}
-                                                setLoading={setLoading}
-                                                getAllUser={getAllUser}
-                                                />
+                                                {storage.get('authUser') && storage.get('authUser').roles.some(role => role.permissions.some(permission => permission.name  == 'admin.users.delete_token')) ?
+                                                   ( <DeleteSession
+                                                    session_id={session.id}
+                                                    user={user}
+                                                    sendnotification={sendnotification}
+                                                    handleClose={handleClose}
+                                                    setLoading={setLoading}
+                                                    getAllUser={getAllUser}
+                                                    />):null}
                                             </div>
                                         </ListItem>
                                     ))}
@@ -181,3 +182,4 @@ function DeleteSession (props){
 
     )
 }
+

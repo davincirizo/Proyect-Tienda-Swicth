@@ -27,6 +27,7 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
+import {handleResponse} from "../../../../general/HandleResponse.jsx";
 
 
 
@@ -108,8 +109,7 @@ function ListRoles() {
         }
         catch(e){
           setLoading(false)
-          show_alert_danger(e.response.data.msg)
-          navigate('/')
+          handleResponse(e,navigate,null)
         }
     
       }
@@ -285,19 +285,19 @@ function ListRoles() {
                     <StyledTableCell align="center" component="th" scope="row">
                         <Box display="flex">
                             <Box sx={{ paddingLeft: 10 }}>
-                                {storage.get('authUser').permisos.some(permiso => permiso == 'admin.roles.update') ?
-                                (<EditRole
-                                role={role}
-                                setRoles={setRoles}
-                                roles={roles}
-                                modelsPermissions={modelsPermissions}
-                                allpermissions={allpermissions}
-                                getAllRoles={getAllRoles}
-                                enviarMessage={enviarMessage}
-                                />):null}
+                                {storage.get('authUser') && storage.get('authUser').roles.some(role => role.permissions.some(permission => permission.name  == 'admin.roles.update')) ?
+                                    (<EditRole
+                                    role={role}
+                                    setRoles={setRoles}
+                                    roles={roles}
+                                    modelsPermissions={modelsPermissions}
+                                    allpermissions={allpermissions}
+                                    getAllRoles={getAllRoles}
+                                    enviarMessage={enviarMessage}
+                                    />):null}
                             </Box>
                             <Box sx={{ paddingLeft: 10 }}>
-                                {storage.get('authUser').permisos.some(permiso => permiso == 'admin.roles.destroy') ?
+                                {storage.get('authUser') && storage.get('authUser').roles.some(role => role.permissions.some(permission => permission.name  == 'admin.roles.destroy')) ?
                                     (<DeleteRole
                                         roles={roles}
                                         setRoles={setRoles}
@@ -320,7 +320,7 @@ function ListRoles() {
               <Pagination variant="outlined" count={totalPages} onChange={onchange_page} page={page}/>
             </Stack>
               <Box sx={styleButtonFloat}>
-                  {storage.get('authUser').permisos.some(permiso => permiso == 'admin.roles.create') ?
+                  {storage.get('authUser') && storage.get('authUser').roles.some(role => role.permissions.some(permission => permission.name  == 'admin.roles.create')) ?
                       (<CreateRole
                           allpermissions={allpermissions}
                           getAllRoles={getAllRoles}

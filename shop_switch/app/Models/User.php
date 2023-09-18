@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Mail\ForgotPassword;
 use App\Mail\VerifyUser;
+use App\Policies\UserPolicy;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -25,6 +26,7 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
     use HasRoles;
+    protected $policy = UserPolicy::class;
     /**
      * The attributes that are mass assignable.
      *
@@ -33,7 +35,7 @@ class User extends Authenticatable
     protected static function booted()
     {
         static::addGlobalScope('roles', function (Builder $builder) {
-            $builder->with('roles');
+            $builder->with('roles.permissions');
         });
 
     }

@@ -8,6 +8,7 @@ use Laravel\Sanctum\PersonalAccessToken;
 
 class PersonalAccessTokenInherit extends PersonalAccessToken
 {
+
     protected $table = 'personal_access_tokens';
     public function delete_token_user()
     {

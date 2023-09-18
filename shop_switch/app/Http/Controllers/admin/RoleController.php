@@ -16,7 +16,7 @@ class RoleController extends Controller
 
     }
     public function index(){
-        $roles = RoleInherit::getPermissions();
+        $roles = RoleInherit::all();
         $permissions = Permission::all();
         $models = $permissions->pluck('models')->toArray();
         $uniqueModels = collect($models)->unique()->values()->all();
@@ -28,10 +28,8 @@ class RoleController extends Controller
     }
 
     public function show(Role $role){
-        $role->permissions;
         return response()->json([
             'rol' => $role,
-//            'permissions'=>$permission
         ],200);
 
     }
@@ -50,7 +48,6 @@ class RoleController extends Controller
         }
         $role = Role::create(['name' => $request->name]);
         $role->syncPermissions($request->permissions);
-        $role->permissions;
 
         return response()->json([
             'status' => true,
@@ -74,7 +71,7 @@ class RoleController extends Controller
         }
         $role->update($request->all());
         $role->syncPermissions($request->permissions);
-        $role->permissions;
+
 
         return response()->json([
             'status' => true,

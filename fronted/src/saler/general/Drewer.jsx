@@ -62,7 +62,7 @@ export default function SwipeableTemporaryDrawer() {
           {text:'Roles',icon:<SupervisedUserCircleIcon />,route:'/saler/list_roles',apiPermission:'admin.roles.index'}
 
       ].map((route) => (
-            storage.get('authUser') && storage.get('authUser').permisos.some(permiso => permiso == route.apiPermission) ?
+            storage.get('authUser') && storage.get('authUser').roles.some(role => role.permissions.some(permission => permission.name == route.apiPermission )) ?
           (<ListItem key={route.text} disablePadding>
             <Link to={route.route} style={{textDecoration: 'none'}}>
               <ListItemButton>

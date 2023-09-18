@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\saler\ProductsController;
 
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -45,7 +46,6 @@ Route::group(['middleware' => ['auth-user']],function(){
     Route::put('admin/users/{user}/',[UserController::class,'update'])->name('admin.users.update');
     Route::delete('admin/users/{user}/',[UserController::class,'destroy'])->name('admin.users.destroy');
     Route::get('admin/users/{user}/',[UserController::class,'show'])->name('admin.users.show');
-
     Route::delete('admin/users/delete_token/{token}/',[UserController::class,'delete_token'])->name('admin.users.delete_token');
     Route::get('admin/users/show_tokens/{user}',[UserController::class,'show_token'])->name('admin.users.show_tokens');
     Route::put('admin/users/active_user/{user}',[UserController::class,'active_user'])->name('admin.users.active_user');

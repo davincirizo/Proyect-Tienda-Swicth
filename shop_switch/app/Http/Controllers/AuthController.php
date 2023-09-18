@@ -11,8 +11,10 @@ use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\PersonalAccessToken;
 use UAParser\Parser;
 
+
 class AuthController extends Controller
 {
+
     public function register(Request $request){
         $rules = [
             'name' => 'required',
@@ -103,13 +105,6 @@ class AuthController extends Controller
             ],400);
         }
         $user = User::where('email', $request->email)->first();
-//        if(!$user){
-//            return response()->json([
-//                'status' => false,
-//                'msg' => 'Usuario o contrasenna incorrecta',
-//            ],401);
-//        }
-
         if (! $user || ! Hash::check($request->password, $user->password)) {
             return response()->json([
                 'status' => false,
@@ -123,8 +118,8 @@ class AuthController extends Controller
         $access->save();
 //        $token->info = $info->toString();
 
-        $user->roles;
-        $user->get_permissions();
+//        $user->roles;
+//        $user->get_permissions();
 
         return response()->json([
             'res' => true,
@@ -249,8 +244,20 @@ class AuthController extends Controller
 
     }
 
-    public function delete_session(PersonalAccessTokenInherit  $token){
-        return $token->delete_token_user();
+    public function delete_session(PersonalAccessTokenInherit  $token,Request $request){
+        $token_user = $request->bearerToken();
+        $access_user = PersonalAccessToken::findToken($token_user);
+        $user= $access_user->tokenable;
+
+        $user_requested = $token->tokenable;
+        if($user->id == $user_requested->id){
+            return $token->delete_token_user();
+        }
+
+        return response()->json([
+            'msg' => 'Forbidden'
+        ], 403);
+
     }
 
 

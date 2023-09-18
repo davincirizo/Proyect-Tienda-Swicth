@@ -277,7 +277,7 @@ function ListCategories() {
                       <Box display="flex">
 
                       <Box sx={{ paddingLeft: 10 }}>
-                          {storage.get('authUser').permisos.some(permiso => permiso == 'admin.categories.update') ?
+                          {storage.get('authUser') && storage.get('authUser').roles.some(role => role.permissions.some(permission => permission.name  == 'admin.categories.update')) ?
                           (<EditCategory
                             category={category}
                             enviarMessage={enviarMessage}
@@ -287,7 +287,7 @@ function ListCategories() {
                         />):null}
                       </Box>
                       <Box sx={{ paddingLeft: 10 }}>
-                          {storage.get('authUser').permisos.some(permiso => permiso == 'admin.categories.destroy') ?
+                          {storage.get('authUser') && storage.get('authUser').roles.some(role => role.permissions.some(permission => permission.name  == 'admin.categories.destroy')) ?
                         (<DeleteCategory
                             category={category}
                             getAllCategory={getAllCategory}
@@ -314,7 +314,7 @@ function ListCategories() {
               <Pagination variant="outlined" count={totalPages} page={page} onChange={onchange_page} />
             </Stack>
             <Box sx={styleButtonFloat}>
-                {storage.get('authUser').permisos.some(permiso => permiso == 'admin.categories.store') ?
+                {storage.get('authUser') && storage.get('authUser').roles.some(role => role.permissions.some(permission => permission.name  == 'admin.categories.store')) ?
               (<CreateCategory
                   categories={categories}
                   setCategories={setCategories}

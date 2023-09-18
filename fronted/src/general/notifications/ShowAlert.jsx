@@ -27,11 +27,3 @@ export function show_alert_danger(mensaje){
         text:mensaje
     })
 }
-export function alert_time_out(){
-    const MySwal = withReactContent(Swal)
-    MySwal.fire({
-        title:'Time Out',
-        icon:'error',
-        text:'Tiempo de Espera Excedido'
-    })
-}

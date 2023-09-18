@@ -21,10 +21,10 @@ class AuthUser
         if($record) {
             return $next($request);
         }
-        else{
+
             return response()->json([
                 'msg' => 'Unauthorized'
             ], 401);
-        }
+
     }
 }

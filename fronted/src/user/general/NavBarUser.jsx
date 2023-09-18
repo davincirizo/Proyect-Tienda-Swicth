@@ -20,7 +20,7 @@ import {useState} from "react";
 import {PulseLoader} from "react-spinners";
 import ForgotPasswordForm from "../../auth/ForgotPasswordForm.jsx";
 import Logout from "../../auth/Logout.jsx";
-import Profile from "../../auth/Profile.jsx";
+import Profile from "../../auth/profile/Profile.jsx";
 
 
 

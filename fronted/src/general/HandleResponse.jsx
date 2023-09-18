@@ -3,34 +3,26 @@ import storage from "../storage/Storage.jsx";
 
 
 
-export function handleResponse(response,navigate,setErrors=null,handleClose=null,getItems=null) {
+export function handleResponse(response,navigate,setErrors=null) {
     console.log(response)
     if (response.message === "Network Error") {
-        alert_time_out()
-        navigate('/')
+        navigate('/error_network')
     }
     if(response.response.status == 400) {
         setErrors(response.response.data.errors)
     }
     if (response.response.status === 401) {
         storage.clear()
-        handleClose()
-        show_alert_danger(response.response.data.msg)
-        navigate('/')
+        navigate('/inhautorized_401')
     }
     if (response.response.status === 403) {
-        show_alert_danger(response.response.data.msg)
-        navigate('/')
+        navigate('/fordibben_403')
     }
     if (response.response.status == 404) {
-        handleClose()
-        show_alert_danger(response.message)
-        getItems()
+       navigate('/not_found_404')
     }
     if(response.response.status == 500) {
-        handleClose()
-        show_alert_danger(response.message)
-        getItems()
+        navigate('/internal_server_error_500')
     }
 
 }

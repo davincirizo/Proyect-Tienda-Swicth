@@ -17,7 +17,7 @@ import {Link} from "react-router-dom";
 import Logout from "../../auth/Logout.jsx";
 import {PulseLoader} from "react-spinners";
 import {useState} from "react";
-import Profile from "../../auth/Profile.jsx";
+import Profile from "../../auth/profile/Profile.jsx";
 
 
 export default function NavBarSaler() {
