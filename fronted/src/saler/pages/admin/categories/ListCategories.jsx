@@ -2,7 +2,6 @@ import {useState, useEffect} from 'react'
 import NavBarSaler from '../../../general/NavBarSale'
 import storage from '../../../../storage/Storage'
 import { useNavigate } from 'react-router-dom'
-import {alert_time_out, show_alert_danger} from "../../../../general/notifications/ShowAlert.jsx";
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';

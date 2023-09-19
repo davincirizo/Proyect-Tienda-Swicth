@@ -17,6 +17,7 @@ import {handleResponse} from "../../general/HandleResponse.jsx";
 import {useState} from "react";
 import {PulseLoader} from "react-spinners";
 import {show_alert_warning} from "../../general/notifications/ShowAlert.jsx";
+import {notification_succes} from "../../general/notifications/NotificationTostify.jsx";
 
 const style = {
     position: 'relative',
@@ -62,7 +63,8 @@ export default function DevicesUser(props){
     const {devices,setDevice} = props
     const [open, setOpen] = React.useState(false)
     const [loading, setLoading] = useState(false);
-    const handleOpen = () => {
+    const handleOpen = (e) => {
+        e.preventDefault()
         setOpen(true)
     }
     const handleClose = () => {
@@ -156,7 +158,7 @@ function DeleteSession (props){
                 }
             })
             setLoading(false)
-            show_alert_warning(res.data.msg)
+            notification_succes(res.data.msg)
             setDevice(devices.filter(token => token.id != session_id))
         }
         catch (e){

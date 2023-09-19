@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\PersonalAccessTokenInherit;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -87,7 +88,6 @@ class AuthController extends Controller
             'message' => 'Correo electrónico verificado con éxito.'
         ], 200);
     }
-
 
     public function login(Request $request ){
         $agenteDeUsuario = $_SERVER["HTTP_USER_AGENT"];
@@ -228,7 +228,6 @@ class AuthController extends Controller
 
 
     }
-
     public function profileGetDevices(User $user,Request $request){
         $token = $request->bearerToken();
         $access = PersonalAccessToken::findToken($token);
@@ -244,21 +243,70 @@ class AuthController extends Controller
 
     }
 
-    public function delete_session(PersonalAccessTokenInherit  $token,Request $request){
-        $token_user = $request->bearerToken();
-        $access_user = PersonalAccessToken::findToken($token_user);
-        $user= $access_user->tokenable;
+    public function delete_session(PersonalAccessTokenInherit $token,Request $request){
+        $user_logued = PersonalAccessTokenInherit::findUser($request->bearerToken());
+        Auth::login($user_logued);
+        $user_update = $token->tokenable;
+        $this->authorize('update_user',$user_update);
+        return $token->delete_token_user();
+    }
 
-        $user_requested = $token->tokenable;
-        if($user->id == $user_requested->id){
-            return $token->delete_token_user();
+    public function update(User $user, Request $request){
+        $user_token = PersonalAccessTokenInherit::findUser($request->bearerToken());
+        Auth::login($user_token);
+        $this->authorize('update_user',$user);
+        $rules = [
+            'name' => 'required',
+        ];
+        $validator = \Validator::make($request->input(),$rules);
+        if ($validator->fails()){
+            return response()->json([
+                'status' => false,
+                'errors' => $validator->errors(),
+            ],400);
         }
-
+        $user->name = $request->name;
+        $user->save();
         return response()->json([
-            'msg' => 'Forbidden'
-        ], 403);
+            'msg' => 'Usuario Actualizado correctamente',
+            'user' => $user
+        ], 200);
+
 
     }
+
+    public function set_new_password(User $user, Request $request){
+        $user_token = PersonalAccessTokenInherit::findUser($request->bearerToken());
+        Auth::login($user_token);
+        $this->authorize('update_user',$user);
+        $rules = [
+             "last_password"=>"required",
+             "password"=>"required",
+             "password_confirm"=>"required|same:password"
+        ];
+        $validator = \Validator::make($request->input(),$rules);
+        if ($validator->fails()){
+            return response()->json([
+                'status' => false,
+                'errors' => $validator->errors(),
+            ],400);
+        }
+        if (! Hash::check($request->last_password, $user->password)){
+            return response()->json([
+                'status' => false,
+                'last_password' => 'Contrasenna Incorrecta'
+            ],400);
+        };
+
+        $user->password = $request->password;
+        $user->save();
+        return response()->json([
+            'status' => true,
+            'last_password' => 'Contraseña cambiada exitosamente'
+        ],200);
+    }
+
+
 
 
 

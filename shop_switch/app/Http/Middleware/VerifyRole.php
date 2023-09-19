@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\PersonalAccessTokenInherit;
 use Closure;
 use Illuminate\Http\Request;
 use Laravel\Sanctum\PersonalAccessToken;
@@ -19,8 +20,7 @@ class VerifyRole
     {
         $route = $request->route()->getName();
         $token = $request->bearerToken();
-        $access = PersonalAccessToken::findToken($token);
-        $user = User::where('email', '=', $access->name)->first();
+        $user = PersonalAccessTokenInherit::findUser($token);
         foreach ($user->roles as $role) {
             foreach ($role->permissions as $permission) {
                 if($permission->name == $route){

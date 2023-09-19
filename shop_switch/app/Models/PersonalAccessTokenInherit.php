@@ -10,6 +10,7 @@ class PersonalAccessTokenInherit extends PersonalAccessToken
 {
 
     protected $table = 'personal_access_tokens';
+
     public function delete_token_user()
     {
         $this->delete();
@@ -18,4 +19,16 @@ class PersonalAccessTokenInherit extends PersonalAccessToken
             'msg' => 'Session cerrada correctamente',
         ], 200);
     }
+
+    #Funcion creada para de un string encontrar un token
+    public static function findUser($string){
+        $token = PersonalAccessToken::findToken($string);
+        if($token) {
+            $user = $token->tokenable;
+            return $user;
+
+        }
+        return false;
+    }
+
 }

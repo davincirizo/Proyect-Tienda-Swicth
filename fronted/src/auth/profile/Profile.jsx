@@ -20,6 +20,7 @@ import DevicesUser from "./Devices.jsx";
 import {PulseLoader} from "react-spinners";
 import {ToastContainer} from "react-toastify";
 import {notification_succes} from "../../general/notifications/NotificationTostify.jsx";
+import ChangePassword from "./ChangePassword.jsx";
 
 const style = {
     position: 'relative',
@@ -42,6 +43,9 @@ export default function Profile (props){
     const user = storage.get('authUser')
     const [loading, setLoading] = useState(false);
     const { register, handleSubmit,setValue } = useForm()
+    const [errors,setErrors] = useState([]);
+
+
     const handleOpen = () => {
         handleMenuClose()
         setOpen(true)
@@ -52,7 +56,26 @@ export default function Profile (props){
         setOpen(false)
     }
 
-    const edit_user = async (data) =>{}
+    const edit_user = async (data) =>{
+        setLoading(true)
+        try {
+            const res = await profileApi.put(`/update/${user.id}`, {
+                name: data.name
+            }, {
+                headers: {
+                    'Authorization': `Bearer ${storage.get('authToken')}`
+                }
+            })
+            storage.set('authUser',res.data.user);
+            setErrors([])
+            setLoading(false)
+            notification_succes(res.data.msg)
+        }
+        catch (e){
+            setLoading(false)
+            handleResponse(e,navigate,setErrors)
+        }
+    }
 
     const get_devices = async () => {
         try {
@@ -110,15 +133,21 @@ return(
                             <span className='input-group-text'><ContactsIcon/></span>
                             <input  className='form-control bg-light text-dark' placeholder='Nombre' type="text" {...register('name')}/>
                         </div>
+                        {errors.name &&(
+                            <small className='fail'>
+                                {errors.name}
+                            </small>
+                        )}
                         <div className='input-group mt-4'>
                             <span className='input-group-text'><MailIcon/></span>
                             <span className='form-control bg-light text-dark'>
                                 {user.email}
                             </span>
-                            <button><ChangeCircleIcon/></button>
+                            <ChangePassword
+                                user={user}
+                            />
                         </div>
                     </div>
-
                     <div className='input-group mt-3'>
                         <span className='input-group-text'><LaptopWindowsIcon/></span>
                         <span className='form-control bg-light text-dark'>

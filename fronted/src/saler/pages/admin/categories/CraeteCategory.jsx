@@ -9,7 +9,6 @@ import AddIcon from '@mui/icons-material/Add';
 import DisplaySettingsIcon from '@mui/icons-material/DisplaySettings';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import storage from "../../../../storage/Storage.jsx";
-import {alert_time_out, show_alert_danger} from "../../../../general/notifications/ShowAlert.jsx";
 import {categoryApi} from "../../../../apis/QueryAxios.jsx";
 import {useNavigate} from "react-router-dom";
 import {handleResponse} from "../../../../general/HandleResponse.jsx";

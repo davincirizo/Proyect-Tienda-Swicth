@@ -1,4 +1,5 @@
 import NavBarUser from "../general/NavBarUser"
+import {ToastContainer} from "react-toastify";
 
 
 function DashboardUser() {
@@ -6,6 +7,7 @@ function DashboardUser() {
   return (
     <>
     <NavBarUser/>
+      <ToastContainer/>
     </>
   )
 }
