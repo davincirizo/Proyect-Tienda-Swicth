@@ -75,7 +75,7 @@ export default function DevicesUser(props){
     return(
         <>
             <button onClick={handleOpen}>
-                <VisibilityIcon/>
+                Dispositivos <VisibilityIcon/>
             </button>
             <Modal
                 open={open}

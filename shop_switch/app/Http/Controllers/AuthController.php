@@ -294,7 +294,7 @@ class AuthController extends Controller
         if (! Hash::check($request->last_password, $user->password)){
             return response()->json([
                 'status' => false,
-                'last_password' => 'Contrasenna Incorrecta'
+                'msg' => 'Contrasenna Incorrecta'
             ],400);
         };
 
@@ -302,7 +302,7 @@ class AuthController extends Controller
         $user->save();
         return response()->json([
             'status' => true,
-            'last_password' => 'Contraseña cambiada exitosamente'
+            'msg' => 'Contraseña cambiada exitosamente'
         ],200);
     }
 

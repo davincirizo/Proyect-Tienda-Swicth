@@ -65,7 +65,9 @@ export default function ChangePassword(props){
     const {user} = props
     const [open, setOpen] = React.useState(false)
     const [loading, setLoading] = useState(false);
-    const { register, handleSubmit,setValue } = useForm()
+    const { register, handleSubmit } = useForm()
+    const [errors,setErrors] = useState([]);
+    const navigate = useNavigate()
 
     const handleOpen = (e) => {
         e.preventDefault()
@@ -76,12 +78,27 @@ export default function ChangePassword(props){
     }
 
     const change_password = async (data) =>{
+            data.preventDefault()
             try{
                 setLoading(true)
-                const res = await profileApi.put('')
+                const res = await profileApi.put(`set_new_password${user.id}`,{
+                    last_password: data.last_password,
+                    password:data.password,
+                    password_confirm:data.password_confirm,
+
+                }, {
+                    headers: {
+                        'Authorization': `Bearer ${storage.get('authToken')}`
+                    }
+                })
+                setLoading(false)
+                setErrors([])
+                notification_succes(res.data.msg)
+
             }
             catch(e){
-
+                setLoading(false)
+                handleResponse(e,navigate,setErrors)
             }
     }
 
@@ -89,7 +106,7 @@ export default function ChangePassword(props){
     return(
         <>
             <button onClick={handleOpen}>
-                <ChangeCircleIcon/>
+               Cambiar Contraseña <ChangeCircleIcon/>
             </button>
             <Modal
                 open={open}
@@ -115,14 +132,29 @@ export default function ChangePassword(props){
                                     <span className='input-group-text'><VpnKeyIcon/></span>
                                     <input className='form-control bg-light text-dark'  placeholder='Currently Password'   type="password" {...register('last_password')}/>
                                 </div>
+                                {errors.last_password &&(
+                                    <small className='fail'>
+                                        {errors.last_password}
+                                    </small>
+                                )}
                                 <div className='input-group mt-3'>
                                     <span className='input-group-text'><VpnKeyIcon/></span>
                                     <input className='form-control bg-light text-dark'  placeholder='New Password'  type="password" {...register('password')}/>
                                 </div>
+                                {errors.password &&(
+                                    <small className='fail'>
+                                        {errors.password}
+                                    </small>
+                                )}
                                 <div className='input-group mt-3'>
                                     <span className='input-group-text'><VpnKeyIcon/></span>
                                     <input className='form-control bg-light text-dark'  placeholder='Confirm Password'   type="password" {...register('password_confirm')}/>
                                 </div>
+                                {errors.password_confirm &&(
+                                    <small className='fail'>
+                                        {errors.password_confirm}
+                                    </small>
+                                )}
                                 <div className='fixed-bottom text-center mb-5'>
                                     <button  type='submit' className='btn btn-dark'>
                                         <span className='mr-3'><SaveIcon/></span>

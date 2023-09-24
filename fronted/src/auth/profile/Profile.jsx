@@ -21,6 +21,7 @@ import {PulseLoader} from "react-spinners";
 import {ToastContainer} from "react-toastify";
 import {notification_succes} from "../../general/notifications/NotificationTostify.jsx";
 import ChangePassword from "./ChangePassword.jsx";
+import LockIcon from '@mui/icons-material/Lock';
 
 const style = {
     position: 'relative',
@@ -143,21 +144,24 @@ return(
                             <span className='form-control bg-light text-dark'>
                                 {user.email}
                             </span>
-                            <ChangePassword
-                                user={user}
-                            />
+                        </div>
+                        <div>
+                            <div className='input-group mt-4'>
+                                    <span className='input-group-text'><LockIcon/></span>
+                                    <ChangePassword
+                                        user={user}
+                                    />
+                            </div>
+                            <div className='input-group mt-4'>
+                                <span className='input-group-text ml-1'><LaptopWindowsIcon/></span>
+                                <DevicesUser
+                                    devices={devices}
+                                    setDevice={setDevice}
+                                />
+                            </div>
                         </div>
                     </div>
-                    <div className='input-group mt-3'>
-                        <span className='input-group-text'><LaptopWindowsIcon/></span>
-                        <span className='form-control bg-light text-dark'>
-                               Dispositivos
-                        </span>
-                        <DevicesUser
-                            devices={devices}
-                            setDevice={setDevice}
-                        />
-                    </div>
+
 
 
 
