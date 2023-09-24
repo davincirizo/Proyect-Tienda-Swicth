@@ -5,7 +5,7 @@ use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\admin\RoleController;
 use App\Http\Controllers\admin\PermissionsController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\Admin\LabelController;
+use App\Http\Controllers\admin\LabelController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\saler\ProductsController;
