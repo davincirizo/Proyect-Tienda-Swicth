@@ -1,5 +1,6 @@
 import NavBarUser from "../../user/general/NavBarUser.jsx";
 import Typography from "@mui/material/Typography";
+import {ToastContainer} from "react-toastify";
 
 export default function Page403() {
     document.title = 'Fordibben';
@@ -13,6 +14,7 @@ export default function Page403() {
                 <h1 className='text-center'>403 - Prohibido</h1>
                 <p>No tiene suficientes Permisos.</p>
             </Typography>
+            <ToastContainer/>
 
         </>
     )

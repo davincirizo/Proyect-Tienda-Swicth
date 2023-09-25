@@ -265,6 +265,11 @@ class AuthController extends Controller
                 'errors' => $validator->errors(),
             ],400);
         }
+        if($request->file('image')){
+            $file = $request->file('image');
+            $url = Storage::put('users',$file);
+            $user->image = $url;
+        }
         $user->name = $request->name;
         $user->save();
         return response()->json([
@@ -306,11 +311,50 @@ class AuthController extends Controller
         ],200);
     }
 
+    public function request_change_email(User $user,Request $request){
+        $user_token = PersonalAccessTokenInherit::findUser($request->bearerToken());
+        Auth::login($user_token);
+        $this->authorize('update_user',$user);
+        $rules = [
+            'email' => 'required|email'
+        ];
+        $validator = \Validator::make($request->input(),$rules);
+        if ($validator->fails()){
+            return response()->json([
+                'status' => false,
+                'errors' => $validator->errors(),
+            ],400);
+        }
+        $user_email = User::where('email', $request->email)->first();
+        if($user_email){
+            return response()->json([
+                'status' => false,
+                'msg' => 'Este correo ya existe',
+            ],400);
+        }
+
+        $email_request = DB::table('reset_email')->where('email',$request->email)->first();
+        if($email_request){
+            return response()->json([
+                'status' => false,
+                'msg' => 'Existe una peticion a este correo en progreso',
+            ],400);
+        }
+
+        if($user->get_request_change_email()){
+            return response()->json([
+                'status' => false,
+                'msg' => 'Existe una peticion de este usuario en progreso',
+            ],400);
+        }
+
+        $user->sendEmailChangeEmail($request->email);
+        return response()->json([
+            'status' => false,
+            'msg' => 'Revise su correo le enviamos un mensaje de confirmacion',
+        ],200);
 
 
 
-
-
-
-
+    }
 }

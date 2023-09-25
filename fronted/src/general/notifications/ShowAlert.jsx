@@ -24,6 +24,7 @@ export function show_alert_danger(mensaje){
     MySwal.fire({
         title:'Error',
         icon:'error',
-        text:mensaje
+        text:mensaje,
+        // target:
     })
 }

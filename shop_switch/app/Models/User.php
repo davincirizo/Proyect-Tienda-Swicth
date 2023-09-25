@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Mail\ChangeEmail;
 use App\Mail\ForgotPassword;
 use App\Mail\VerifyUser;
 use App\Policies\UserPolicy;
@@ -115,6 +116,20 @@ class User extends Authenticatable
             Mail::to($this->email)->send($correo);
         }
     }
+    public function sendEmailChangeEmail($email_change){
+        $fronted_url = env('FRONTEND_URL');
+        $token = Str::random(64);
+        $record_reset = DB::table('reset_email')->insert([
+            'email' => $email_change,
+            'token' => $token,
+            'user_id' => $this->id,
+            'created_at' => Carbon::now()
+        ]);
+        $url_user = $fronted_url . '/change_email/' . $token;
+        $correo = new ChangeEmail($url_user);
+        Mail::to($email_change)->send($correo);
+
+    }
 
     public function get_permissions(){
         $permisos = [];
@@ -130,5 +145,11 @@ class User extends Authenticatable
     public function products(){
         return $this->hasMany('App\Models\Product');
     }
+
+    public function get_request_change_email(){
+        return  DB::table('reset_email')->where('user_id',$this->id)->first();
+
+    }
+
 
 }

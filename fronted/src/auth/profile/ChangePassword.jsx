@@ -1,11 +1,7 @@
-import VisibilityIcon from "@mui/icons-material/Visibility.js";
+
 import * as React from "react";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
-import List from "@mui/material/List";
-import NotFound from "../../general/NotFound.jsx";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
 import {styled} from "@mui/material/styles";
 import TableCell, {tableCellClasses} from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
@@ -16,7 +12,7 @@ import storage from "../../storage/Storage.jsx";
 import {handleResponse} from "../../general/HandleResponse.jsx";
 import {useState} from "react";
 import {PulseLoader} from "react-spinners";
-import {show_alert_warning} from "../../general/notifications/ShowAlert.jsx";
+import {show_alert_danger, show_alert_warning} from "../../general/notifications/ShowAlert.jsx";
 import {notification_succes} from "../../general/notifications/NotificationTostify.jsx";
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
 import VpnKeyIcon from "@mui/icons-material/VpnKey.js";
@@ -30,7 +26,7 @@ const style = {
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: 400,
-    height:350,
+    height:380,
     bgcolor: '#ffffff',
     border: '2px solid #000',
     boxShadow: 24,
@@ -68,23 +64,35 @@ export default function ChangePassword(props){
     const { register, handleSubmit } = useForm()
     const [errors,setErrors] = useState([]);
     const navigate = useNavigate()
+    const [last_password,setLast_password] = useState('')
+    const [password,setpassword] = useState('')
+    const [password_confirm,setpassword_confirm] = useState('')
+    const [error_auth,seterror_auth] = useState('')
 
+    const clear_dashboard=()=>{
+        setLast_password('')
+        setpassword('')
+        setpassword_confirm('')
+    }
     const handleOpen = (e) => {
         e.preventDefault()
         setOpen(true)
     }
     const handleClose = () => {
+        setErrors([])
+        seterror_auth('')
+        clear_dashboard()
         setOpen(false)
     }
 
     const change_password = async (data) =>{
-            data.preventDefault()
+            setErrors([])
             try{
                 setLoading(true)
-                const res = await profileApi.put(`set_new_password${user.id}`,{
-                    last_password: data.last_password,
-                    password:data.password,
-                    password_confirm:data.password_confirm,
+                const res = await profileApi.put(`set_new_password/${user.id}`,{
+                    last_password: last_password,
+                    password:password,
+                    password_confirm:password_confirm,
 
                 }, {
                     headers: {
@@ -92,13 +100,18 @@ export default function ChangePassword(props){
                     }
                 })
                 setLoading(false)
-                setErrors([])
+                handleClose()
                 notification_succes(res.data.msg)
 
             }
             catch(e){
                 setLoading(false)
-                handleResponse(e,navigate,setErrors)
+                if(e.response.data.errors) {
+                    handleResponse(e, navigate, setErrors)
+                }
+                else{
+                    seterror_auth(e.response.data.msg)
+                }
             }
     }
 
@@ -126,11 +139,11 @@ export default function ChangePassword(props){
                                 />
                             </div>
                         ):
-                        <div>
-                            <form onSubmit={handleSubmit(change_password)}>
+                        <div >
+                            <form>
                                 <div className='input-group mt-3'>
                                     <span className='input-group-text'><VpnKeyIcon/></span>
-                                    <input className='form-control bg-light text-dark'  placeholder='Currently Password'   type="password" {...register('last_password')}/>
+                                    <input value={last_password} className='form-control bg-light text-dark'  placeholder='Currently Password'   type="password" onChange={(e)=>setLast_password(e.target.value)}/>
                                 </div>
                                 {errors.last_password &&(
                                     <small className='fail'>
@@ -139,7 +152,7 @@ export default function ChangePassword(props){
                                 )}
                                 <div className='input-group mt-3'>
                                     <span className='input-group-text'><VpnKeyIcon/></span>
-                                    <input className='form-control bg-light text-dark'  placeholder='New Password'  type="password" {...register('password')}/>
+                                    <input value={password} className='form-control bg-light text-dark'  placeholder='New Password'  type="password" onChange={(e)=>setpassword(e.target.value)} />
                                 </div>
                                 {errors.password &&(
                                     <small className='fail'>
@@ -148,15 +161,20 @@ export default function ChangePassword(props){
                                 )}
                                 <div className='input-group mt-3'>
                                     <span className='input-group-text'><VpnKeyIcon/></span>
-                                    <input className='form-control bg-light text-dark'  placeholder='Confirm Password'   type="password" {...register('password_confirm')}/>
+                                    <input value={password_confirm} className='form-control bg-light text-dark'  placeholder='Confirm Password'   type="password" onChange={(e)=>setpassword_confirm(e.target.value)}/>
                                 </div>
                                 {errors.password_confirm &&(
                                     <small className='fail'>
                                         {errors.password_confirm}
                                     </small>
                                 )}
+                                {error_auth &&(
+                                    <small className='fail'>
+                                        {error_auth}
+                                    </small>
+                                )}
                                 <div className='fixed-bottom text-center mb-5'>
-                                    <button  type='submit' className='btn btn-dark'>
+                                    <button onClick={change_password} className='btn btn-dark'>
                                         <span className='mr-3'><SaveIcon/></span>
                                     </button>
                                 </div>

@@ -1,5 +1,6 @@
 import NavBarUser from "../../user/general/NavBarUser.jsx";
 import Typography from "@mui/material/Typography";
+import {ToastContainer} from "react-toastify";
 
 export default function PageErrorNetwork() {
     document.title = 'Error Network';
@@ -13,6 +14,8 @@ export default function PageErrorNetwork() {
                 <h1 className='text-center'>Error Network</h1>
                 <p>Lo sentimos, hay problema de conexion, Intentelo mas tarde</p>
             </Typography>
+            <ToastContainer/>
+
 
         </>
     )

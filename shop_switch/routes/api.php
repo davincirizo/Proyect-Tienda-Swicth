@@ -36,8 +36,9 @@ Route::group(['middleware' => ['auth-user']],function(){
     Route::post('logout',[AuthController::class,'logout']);
     Route::get('profile/getDevices/{user}',[AuthController::class,'profileGetDevices']);
     Route::delete('profile/delete_session/{token}',[AuthController::class,'delete_session']);
-    Route::put('profile/update/{user}',[AuthController::class,'update']);
+    Route::post('profile/update/{user}',[AuthController::class,'update']);
     Route::put('profile/set_new_password/{user}',[AuthController::class,'set_new_password']);
+    Route::post('profile/request_change_email/{user}',[AuthController::class,'request_change_email']);
 
     Route::get('admin/categories',[CategoryController::class,'index'])->name('admin.categories.index');
     Route::post('admin/categories',[CategoryController::class,'store'])->name('admin.categories.store');

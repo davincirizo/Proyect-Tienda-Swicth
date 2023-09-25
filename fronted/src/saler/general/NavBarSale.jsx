@@ -18,6 +18,7 @@ import Logout from "../../auth/Logout.jsx";
 import {PulseLoader} from "react-spinners";
 import {useState} from "react";
 import Profile from "../../auth/profile/Profile.jsx";
+import AvatarUser from "../../general/AvatarUser.jsx";
 
 
 export default function NavBarSaler() {
@@ -174,7 +175,7 @@ export default function NavBarSaler() {
               onClick={handleProfileMenuOpen}
               color="inherit"
             >
-              <AccountCircle />
+              <AvatarUser/>
             </IconButton>
           </Box>
           <Box sx={{ display: { xs: 'flex', md: 'none' } }}>

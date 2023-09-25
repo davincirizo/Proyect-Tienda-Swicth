@@ -1,5 +1,6 @@
 import NavBarUser from "../../user/general/NavBarUser.jsx";
 import Typography from "@mui/material/Typography";
+import {ToastContainer} from "react-toastify";
 
 export default function Page401() {
     document.title = 'Inhautorized';
@@ -13,6 +14,8 @@ export default function Page401() {
             <h1 className='text-center'>401 - No autorizado</h1>
                 <p>Lo sentimos, no tienes permiso para acceder a esta página.</p>
             </Typography>
+            <ToastContainer/>
+
 
         </>
     )

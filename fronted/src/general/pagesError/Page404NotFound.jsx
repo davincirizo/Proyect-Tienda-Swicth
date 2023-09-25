@@ -1,5 +1,6 @@
 import NavBarUser from "../../user/general/NavBarUser.jsx";
 import Typography from "@mui/material/Typography";
+import {ToastContainer} from "react-toastify";
 
 export default function Page404() {
     document.title = 'Not Found';
@@ -13,6 +14,8 @@ export default function Page404() {
                 <h1 className='text-center'>404 - No Encontrado</h1>
                 <p>Lo sentimos, no existe el registro buscado</p>
             </Typography>
+            <ToastContainer/>
+
 
         </>
     )

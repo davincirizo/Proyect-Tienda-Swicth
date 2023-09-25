@@ -22,6 +22,8 @@ import {ToastContainer} from "react-toastify";
 import {notification_succes} from "../../general/notifications/NotificationTostify.jsx";
 import ChangePassword from "./ChangePassword.jsx";
 import LockIcon from '@mui/icons-material/Lock';
+import {Avatar} from "@mui/material";
+import ChangeEmail from "./ChangeEmail.jsx";
 
 const style = {
     position: 'relative',
@@ -45,26 +47,52 @@ export default function Profile (props){
     const [loading, setLoading] = useState(false);
     const { register, handleSubmit,setValue } = useForm()
     const [errors,setErrors] = useState([]);
+    const [file_name,setfileName] = useState('')
+    const [url_file,setURL_File] = useState(null)
+    const [file,setFile] = useState(null)
+    const backend = import.meta.env.VITE_BACKEND_URL_native
 
 
+
+    const clear_dashboard=()=>{
+        setFile(null)
+        setURL_File(null)
+        setfileName(null)
+    }
     const handleOpen = () => {
         handleMenuClose()
         setOpen(true)
         get_devices()
         setValue("name",user.name)
+        if(storage.get('authUser').image){
+            setURL_File(`${backend}/storage/${storage.get('authUser').image}`)
+        }
     }
     const handleClose = () => {
         setOpen(false)
+        clear_dashboard()
+    }
+
+    const Changeimage = async (e) =>{
+        const file = e
+        let url = URL.createObjectURL(file)
+        setFile(e)
+        setURL_File(url)
+        setfileName(e.name)
+
+
     }
 
     const edit_user = async (data) =>{
+        const formData = new FormData();
+        formData.append('name', data.name);
+        formData.append('image', file);
         setLoading(true)
         try {
-            const res = await profileApi.put(`/update/${user.id}`, {
-                name: data.name
-            }, {
+            const res = await profileApi.post(`/update/${user.id}`, formData, {
                 headers: {
-                    'Authorization': `Bearer ${storage.get('authToken')}`
+                    'Authorization': `Bearer ${storage.get('authToken')}`,
+                    'Content-Type':"multipart/form-data"
                 }
             })
             storage.set('authUser',res.data.user);
@@ -88,7 +116,6 @@ export default function Profile (props){
             })
             setLoading(false)
             setDevice(res.data.devices)
-            console.log(res.data.devices)
         }
         catch (e){
             setLoading(false)
@@ -144,6 +171,7 @@ return(
                             <span className='form-control bg-light text-dark'>
                                 {user.email}
                             </span>
+                            <ChangeEmail/>
                         </div>
                         <div>
                             <div className='input-group mt-4'>
@@ -159,6 +187,24 @@ return(
                                     setDevice={setDevice}
                                 />
                             </div>
+                        </div>
+
+                        <div className='mt-3 m-b3'>
+                            <label className='form-label'>Perfil Photo</label>
+                            <input
+                                name='file'
+                                onChange={(e)=>Changeimage(e.target.files[0])}
+                                type='file'
+                                className='form-control'
+                                accept="image/*"
+                            />
+
+                            <Avatar
+                                alt="Remy Sharp"
+                                src={url_file}
+                                sx={{ width: 100, height: 100 }}
+                            />
+
                         </div>
                     </div>
 

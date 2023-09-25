@@ -169,7 +169,6 @@ function DeleteSession (props){
 
     return(
         <div onClick={delete_session}>
-
             <PhonelinkEraseIcon/>
         </div>
 

@@ -21,6 +21,8 @@ import {PulseLoader} from "react-spinners";
 import ForgotPasswordForm from "../../auth/ForgotPasswordForm.jsx";
 import Logout from "../../auth/Logout.jsx";
 import Profile from "../../auth/profile/Profile.jsx";
+import AvatarUser from "../../general/AvatarUser.jsx";
+
 
 
 
@@ -35,6 +37,7 @@ export default function NavBarUser() {
   // }
 
   const handleProfileMenuOpen = (event) => {
+    console.log(event.currentTarget)
     setAnchorEl(event.currentTarget);
   };
   const handleMobileMenuClose = () => {
@@ -179,7 +182,7 @@ export default function NavBarUser() {
               onClick={handleProfileMenuOpen}
               color="inherit"
             >
-              <AccountCircle />
+              <AvatarUser/>
             </IconButton>
           </Box>
           <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
