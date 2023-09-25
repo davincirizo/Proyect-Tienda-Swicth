@@ -50,6 +50,7 @@ export default function Profile (props){
     const [file_name,setfileName] = useState('')
     const [url_file,setURL_File] = useState(null)
     const [file,setFile] = useState(null)
+    const [email,setEmail] = useState('')
     const backend = import.meta.env.VITE_BACKEND_URL_native
 
 
@@ -64,6 +65,7 @@ export default function Profile (props){
         setOpen(true)
         get_devices()
         setValue("name",user.name)
+        setEmail(user.email)
         if(storage.get('authUser').image){
             setURL_File(`${backend}/storage/${storage.get('authUser').image}`)
         }
@@ -168,9 +170,8 @@ return(
                         )}
                         <div className='input-group mt-4'>
                             <span className='input-group-text'><MailIcon/></span>
-                            <span className='form-control bg-light text-dark'>
-                                {user.email}
-                            </span>
+                            <input className='form-control bg-light text-dark' value={email} onChange={(e)=>setEmail(e.target.value)}/>
+
                             <ChangeEmail/>
                         </div>
                         <div>

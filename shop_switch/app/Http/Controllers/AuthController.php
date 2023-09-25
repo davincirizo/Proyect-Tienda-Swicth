@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\PersonalAccessTokenInherit;
+use App\Models\ResetEmail;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -333,7 +334,7 @@ class AuthController extends Controller
             ],400);
         }
 
-        $email_request = DB::table('reset_email')->where('email',$request->email)->first();
+        $email_request = ResetEmail::where('email',$request->email)->first();
         if($email_request){
             return response()->json([
                 'status' => false,
@@ -357,4 +358,50 @@ class AuthController extends Controller
 
 
     }
+
+    public function change_email(User $user,$token,Request $request){
+        $user_token = PersonalAccessTokenInherit::findUser($request->bearerToken());
+        Auth::login($user_token);
+        $this->authorize('update_user',$user);
+        $email_request = ResetEmail::where('user_id','=',$user->id)
+            ->where('token','=',$token)
+            ->first();
+        if(! $email_request){
+           abort(404);
+        }
+        $user->email = $email_request->email;
+        $user->save();
+        $email_request->delete();
+        return response()->json([
+            'status' => false,
+            'msg' => 'Correo actualizado correctamente',
+        ],200);
+
+    }
+
+    public function confirm_password(User $user,Request $request){
+        $user_token = PersonalAccessTokenInherit::findUser($request->bearerToken());
+        Auth::login($user_token);
+        $this->authorize('update_user',$user);
+        $rules = [
+            'password' => 'required'
+        ];
+        $validator = \Validator::make($request->input(),$rules);
+        if ($validator->fails()){
+            return response()->json([
+                'status' => false,
+                'errors' => $validator->errors(),
+            ],400);
+        }
+        if(Hash::check($request->password, $user->password)){
+            return response()->json([
+                'status' => false,
+                'msg' => 'Contrasenna correcta',
+            ],200);
+        }
+        return response()->json([
+            'status' => false,
+            'msg' => 'Contrasenna incorrecta',
+        ],400);
+}
 }

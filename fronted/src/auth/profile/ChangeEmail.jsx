@@ -26,7 +26,7 @@ const style = {
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: 400,
-    height:380,
+    height:240,
     bgcolor: '#ffffff',
     border: '2px solid #000',
     boxShadow: 24,
@@ -64,15 +64,11 @@ export default function ChangeEmail(props){
     const { register, handleSubmit } = useForm()
     const [errors,setErrors] = useState([]);
     const navigate = useNavigate()
-    const [last_password,setLast_password] = useState('')
     const [password,setpassword] = useState('')
-    const [password_confirm,setpassword_confirm] = useState('')
     const [error_auth,seterror_auth] = useState('')
 
     const clear_dashboard=()=>{
-        setLast_password('')
         setpassword('')
-        setpassword_confirm('')
     }
     const handleOpen = (e) => {
         e.preventDefault()
@@ -90,9 +86,7 @@ export default function ChangeEmail(props){
         try{
             setLoading(true)
             const res = await profileApi.put(`set_new_password/${user.id}`,{
-                last_password: last_password,
                 password:password,
-                password_confirm:password_confirm,
 
             }, {
                 headers: {
@@ -143,29 +137,11 @@ export default function ChangeEmail(props){
                             <form>
                                 <div className='input-group mt-3'>
                                     <span className='input-group-text'><VpnKeyIcon/></span>
-                                    <input value={last_password} className='form-control bg-light text-dark'  placeholder='Password'   type="password" onChange={(e)=>setLast_password(e.target.value)}/>
-                                </div>
-                                {errors.last_password &&(
-                                    <small className='fail'>
-                                        {errors.last_password}
-                                    </small>
-                                )}
-                                <div className='input-group mt-3'>
-                                    <span className='input-group-text'><VpnKeyIcon/></span>
-                                    <input value={password} className='form-control bg-light text-dark'  placeholder='New Password'  type="password" onChange={(e)=>setpassword(e.target.value)} />
+                                    <input value={password} className='form-control bg-light text-dark'  placeholder='Password'  type="password" onChange={(e)=>setpassword(e.target.value)} />
                                 </div>
                                 {errors.password &&(
                                     <small className='fail'>
                                         {errors.password}
-                                    </small>
-                                )}
-                                <div className='input-group mt-3'>
-                                    <span className='input-group-text'><VpnKeyIcon/></span>
-                                    <input value={password_confirm} className='form-control bg-light text-dark'  placeholder='Confirm Password'   type="password" onChange={(e)=>setpassword_confirm(e.target.value)}/>
-                                </div>
-                                {errors.password_confirm &&(
-                                    <small className='fail'>
-                                        {errors.password_confirm}
                                     </small>
                                 )}
                                 {error_auth &&(

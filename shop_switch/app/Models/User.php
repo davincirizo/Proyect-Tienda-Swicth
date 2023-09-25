@@ -68,17 +68,6 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
-//    public static function all($columns = ['*'])
-//    {
-//        $users = parent::all();
-//        $users->map(function ($user){
-//            $user->roles;
-//            return $user;
-//        });
-//
-//
-//        return $users;
-//    }
 
 
     public function sendEmailVerification(){
@@ -119,12 +108,18 @@ class User extends Authenticatable
     public function sendEmailChangeEmail($email_change){
         $fronted_url = env('FRONTEND_URL');
         $token = Str::random(64);
-        $record_reset = DB::table('reset_email')->insert([
-            'email' => $email_change,
+//        $record_reset = DB::table('reset_email')->insert([
+//            'email' => $email_change,
+//            'token' => $token,
+//            'user_id' => $this->id,
+//            'created_at' => Carbon::now()
+//        ]);
+        $data = [
+            'email'=>$email_change,
             'token' => $token,
             'user_id' => $this->id,
-            'created_at' => Carbon::now()
-        ]);
+            ];
+        $record_reset = ResetEmail::create($data);
         $url_user = $fronted_url . '/change_email/' . $token;
         $correo = new ChangeEmail($url_user);
         Mail::to($email_change)->send($correo);
