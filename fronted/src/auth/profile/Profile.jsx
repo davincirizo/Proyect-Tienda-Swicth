@@ -23,7 +23,7 @@ import {notification_succes} from "../../general/notifications/NotificationTosti
 import ChangePassword from "./ChangePassword.jsx";
 import LockIcon from '@mui/icons-material/Lock';
 import {Avatar} from "@mui/material";
-import ChangeEmail from "./ChangeEmail.jsx";
+import ConfirmPassword from "./ConfirmPassword.jsx";
 
 const style = {
     position: 'relative',
@@ -52,6 +52,7 @@ export default function Profile (props){
     const [file,setFile] = useState(null)
     const [email,setEmail] = useState('')
     const backend = import.meta.env.VITE_BACKEND_URL_native
+    const [error_change_email,setError_change_email] =  useState('')
 
 
 
@@ -59,6 +60,7 @@ export default function Profile (props){
         setFile(null)
         setURL_File(null)
         setfileName(null)
+        setError_change_email('')
     }
     const handleOpen = () => {
         handleMenuClose()
@@ -121,7 +123,32 @@ export default function Profile (props){
         }
         catch (e){
             setLoading(false)
-            handleResponse(e,navigate,null,handleClose,null)
+            handleResponse(e,navigate,null)
+        }
+    }
+
+    const change_email = async  ()=>{
+
+        try {
+            setLoading(true)
+            const res = await profileApi.post(`/request_change_email/${user.id}`, {
+                email:email
+            },{
+                headers: {
+                    'Authorization': `Bearer ${storage.get('authToken')}`
+                },
+            })
+            setLoading(false)
+            notification_succes(res.data.msg)
+        }
+        catch (e){
+            setLoading(false)
+            if(e.response.data.errors) {
+                handleResponse(e,navigate,null)
+            }
+            else{
+                setError_change_email(e.response.data.msg)
+            }
         }
     }
 
@@ -172,8 +199,15 @@ return(
                             <span className='input-group-text'><MailIcon/></span>
                             <input className='form-control bg-light text-dark' value={email} onChange={(e)=>setEmail(e.target.value)}/>
 
-                            <ChangeEmail/>
+                            <ConfirmPassword
+                                function_={change_email}
+                            />
                         </div>
+                        {error_change_email &&(
+                            <small className='fail'>
+                                {error_change_email}
+                            </small>
+                        )}
                         <div>
                             <div className='input-group mt-4'>
                                     <span className='input-group-text'><LockIcon/></span>

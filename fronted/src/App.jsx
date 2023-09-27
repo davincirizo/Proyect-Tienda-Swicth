@@ -12,6 +12,7 @@ import Page403 from "./general/pagesError/Page403Fordibben.jsx";
 import Page404 from "./general/pagesError/Page404NotFound.jsx";
 import Page500 from "./general/pagesError/Page500.jsx";
 import PageErrorNetwork from "./general/pagesError/PageErrorNetwork.jsx";
+import SetChangePasswordProfile from "./auth/profile/SetChangePasswordProfile.jsx";
 
 
 function App() {
@@ -23,6 +24,8 @@ function App() {
         <Route path='/' element={<DashboardUser/>}/>
         <Route path='/verify/:id/:hash' element={<VerifyEmail/>}/>
         <Route path='/reset-password/:token' element={<ForgotPasswordSet/>}/>
+        <Route path='/change_email/:token' element={<SetChangePasswordProfile/>}/>
+
 
 
         <Route path='/saler/dashboardSaler' element={<DashboardSaler/>}/>

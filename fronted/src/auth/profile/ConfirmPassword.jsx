@@ -57,8 +57,8 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
         backgroundColor: "#a8a8a8",
     },
 }));
-export default function ChangeEmail(props){
-    const {user} = props
+export default function ConfirmPassword(props){
+    const {function_} = props
     const [open, setOpen] = React.useState(false)
     const [loading, setLoading] = useState(false);
     const { register, handleSubmit } = useForm()
@@ -81,11 +81,12 @@ export default function ChangeEmail(props){
         setOpen(false)
     }
 
-    const change_password = async (data) =>{
+    const confirm_password = async (data) =>{
         setErrors([])
+        setLoading(true)
         try{
             setLoading(true)
-            const res = await profileApi.put(`set_new_password/${user.id}`,{
+            const res = await profileApi.put(`confirm_password/${storage.get('authUser').id}`,{
                 password:password,
 
             }, {
@@ -95,7 +96,7 @@ export default function ChangeEmail(props){
             })
             setLoading(false)
             handleClose()
-            notification_succes(res.data.msg)
+            function_()
 
         }
         catch(e){
@@ -113,7 +114,10 @@ export default function ChangeEmail(props){
     return(
         <>
             <button onClick={handleOpen}>
-                Cambiar Email <ChangeCircleIcon/>
+                Cambiar Email
+                <ChangeCircleIcon
+
+                />
             </button>
             <Modal
                 open={open}
@@ -150,7 +154,7 @@ export default function ChangeEmail(props){
                                     </small>
                                 )}
                                 <div className='fixed-bottom text-center mb-5'>
-                                    <button onClick={change_password} className='btn btn-dark'>
+                                    <button onClick={confirm_password} className='btn btn-dark'>
                                         <span className='mr-3'><SaveIcon/></span>
                                     </button>
                                 </div>

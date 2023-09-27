@@ -6,10 +6,9 @@ import * as React from "react";
 
 export default function AvatarUser() {
     const backend = import.meta.env.VITE_BACKEND_URL_native
-    console.log(`${backend}/storage/${storage.get('authUser').image}`)
 
     return<>
-        {storage.get('authUser').image?
+        {storage.get('authUser') && storage.get('authUser').image?
         (   <>
                 <Avatar sx={{ width: 28, height: 28 }}
                         alt="Remy Sharp"
@@ -21,9 +20,10 @@ export default function AvatarUser() {
             :<>
                 <AccountCircle />
             </>}
-        <span style={{ fontSize: "15px" }}>
-            {storage.get('authUser').name}
-        </span>
+        {storage.get('authUser')?
+            (<span style={{ fontSize: "15px" }}>
+                {storage.get('authUser').name}
+            </span>):null}
     </>
 
 }

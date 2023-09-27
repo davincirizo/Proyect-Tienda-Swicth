@@ -230,14 +230,9 @@ class AuthController extends Controller
 
     }
     public function profileGetDevices(User $user,Request $request){
-        $token = $request->bearerToken();
-        $access = PersonalAccessToken::findToken($token);
-        $user_token = User::where('email', '=', $access->name)->first();
-        if($user_token != $user ){
-            return response()->json([
-                'msg' => 'Forbidden'
-            ], 403);
-        }
+        $user_token = PersonalAccessTokenInherit::findUser($request->bearerToken());
+        Auth::login($user_token);
+        $this->authorize('update_user',$user);
         return response()->json([
             'devices'=>$user->tokens
         ]);
@@ -375,6 +370,7 @@ class AuthController extends Controller
         return response()->json([
             'status' => false,
             'msg' => 'Correo actualizado correctamente',
+            'user'=>$user
         ],200);
 
     }
