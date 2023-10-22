@@ -16,6 +16,7 @@ import { Link } from 'react-router-dom';
 import SupervisedUserCircleIcon from '@mui/icons-material/SupervisedUserCircle';
 import StyleIcon from '@mui/icons-material/Style';
 import storage from "../../storage/Storage.jsx";
+import HomeWorkIcon from '@mui/icons-material/HomeWork';
 
 
 export default function SwipeableTemporaryDrawer() {
@@ -57,9 +58,10 @@ export default function SwipeableTemporaryDrawer() {
       <List>
         {[
           {text:'Categorias',icon:<DisplaySettingsIcon />,route:'/saler/list_categories',apiPermission:'admin.categories.index'},
-          {text:'Etiqutas',icon:<StyleIcon />,route:'/saler/list_labels',apiPermission:'admin.labels.index'},
+          {text:'Etiqutas',icon:<StyleIcon />,route:'/saler/list_laLisbels',apiPermission:'admin.labels.index'},
           {text:'Usuarios',icon:<PeopleAltIcon />,route:'/saler/list_users',apiPermission:'admin.users.index'},
-          {text:'Roles',icon:<SupervisedUserCircleIcon />,route:'/saler/list_roles',apiPermission:'admin.roles.index'}
+          {text:'Roles',icon:<SupervisedUserCircleIcon />,route:'/saler/list_roles',apiPermission:'admin.roles.index'},
+          {text:'Compañias',icon:<HomeWorkIcon />,route:'/saler/list_companies',apiPermission:'admin.companies.index'}
 
       ].map((route) => (
             storage.get('authUser') && storage.get('authUser').roles.some(role => role.permissions.some(permission => permission.name == route.apiPermission )) ?

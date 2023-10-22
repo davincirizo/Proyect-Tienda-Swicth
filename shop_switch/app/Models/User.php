@@ -38,6 +38,9 @@ class User extends Authenticatable
         static::addGlobalScope('roles', function (Builder $builder) {
             $builder->with('roles.permissions');
         });
+        static::addGlobalScope('companies', function (Builder $builder) {
+            $builder->with('companies');
+        });
 
     }
 
@@ -68,6 +71,17 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function companies(){
+        return $this->belongsToMany('App\Models\Company','company_user','user','company');
+    }
+
+    public function syncComapnies($array){
+        $this->companies()->sync($array);
+    }
+    public function products(){
+        return $this->hasMany('App\Models\Product');
+    }
 
 
     public function sendEmailVerification(){
@@ -105,6 +119,7 @@ class User extends Authenticatable
             Mail::to($this->email)->send($correo);
         }
     }
+
     public function sendEmailChangeEmail($email_change){
         $fronted_url = env('FRONTEND_URL');
         $token = Str::random(64);
@@ -135,10 +150,6 @@ class User extends Authenticatable
 
         }
         return $this->permisos = $permisos;
-    }
-
-    public function products(){
-        return $this->hasMany('App\Models\Product');
     }
 
     public function get_request_change_email(){

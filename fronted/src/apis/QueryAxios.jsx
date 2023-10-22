@@ -37,3 +37,7 @@ export const profileApi = axios.create({
     baseURL:`${backend}/profile`,
     timeout: 30000,
 })
+export const companyApi = axios.create({
+    baseURL:`${backend}/admin/companies`,
+    timeout: 30000,
+})

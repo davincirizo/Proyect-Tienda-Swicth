@@ -3,10 +3,10 @@ import storage from "../storage/Storage.jsx";
 
 
 export function handleResponse(response,navigate,setErrors=null) {
-    console.log(response)
     if (response.message === "Network Error") {
         navigate('/error_network')
     }
+
     if(response.response.status == 400) {
         setErrors(response.response.data.errors)
     }

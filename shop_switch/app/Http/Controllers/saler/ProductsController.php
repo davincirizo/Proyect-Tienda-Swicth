@@ -12,8 +12,10 @@ use Laravel\Sanctum\PersonalAccessToken;
 class ProductsController extends Controller
 {
     public function index(){
-        $products = Product::getProducts();
-        return response()->json($products,200);;
+        $products = Product::all_atrributes(['category','company','labels','user']);
+        return response()->json([
+            'products'=>$products
+        ],200);;
     }
 
     public function show(Product $product){
@@ -26,9 +28,9 @@ class ProductsController extends Controller
     {
         $rules = [
             'name' => 'required',
-            'category_id' => 'required',
-            'price' => 'required',
-            'quantity' => 'required',
+            'category' => 'required',
+            'company' => 'required',
+            'user' => 'required',
         ];
         $validator = \Validator::make($request->input(),$rules);
         if ($validator->fails()){
@@ -43,10 +45,8 @@ class ProductsController extends Controller
 
         $product = new Product;
         $product->name = $request->name;
-        $product->price = $request->price;
-        $product->quantity = $request->quantity;
-        $product->category_id = $request->category_id;
-        $product->created_user = $user->id;
+        $product->category = $request->category_id;
+        $product->user = $user->id;
         $product->save();
         $product->labels()->sync($request->labels);
         return response()->json([

@@ -1,14 +1,15 @@
 <?php
 
 use App\Http\Controllers\admin\CategoryController;
-use App\Http\Controllers\admin\UserController;
-use App\Http\Controllers\admin\RoleController;
-use App\Http\Controllers\admin\PermissionsController;
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\admin\CompanyController;
 use App\Http\Controllers\admin\LabelController;
+use App\Http\Controllers\admin\PermissionsController;
+use App\Http\Controllers\admin\RoleController;
+use App\Http\Controllers\admin\UserController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\saler\ProductsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\saler\ProductsController;
 
 
 /*
@@ -41,6 +42,8 @@ Route::group(['middleware' => ['auth-user']],function(){
     Route::post('profile/request_change_email/{user}',[AuthController::class,'request_change_email']);
     Route::get('profile/change_email/{user}/{token}',[AuthController::class,'change_email']);
     Route::put('profile/confirm_password/{user}',[AuthController::class,'confirm_password']);
+    Route::get('profile/companies',[AuthController::class,'index_companies'])->name('saler.companies.index');
+    Route::put('profile/companies/{company}',[AuthController::class,'update_companies'])->name('saler.companies.update');
 
     Route::get('admin/categories',[CategoryController::class,'index'])->name('admin.categories.index');
     Route::post('admin/categories',[CategoryController::class,'store'])->name('admin.categories.store');
@@ -70,6 +73,12 @@ Route::group(['middleware' => ['auth-user']],function(){
     Route::put('admin/labels/{label}',[LabelController::class,'update'])->name('admin.labels.update');
     Route::post('admin/labels',[LabelController::class,'store'])->name('admin.labels.create');
     Route::delete('admin/labels/{label}',[LabelController::class,'destroy'])->name('admin.labels.destroy');
+
+    Route::get('admin/companies',[CompanyController::class,'index'])->name('admin.companies.index');
+    Route::post('admin/companies',[CompanyController::class,'store'])->name('admin.companies.store');
+    Route::put('admin/companies/{company}',[CompanyController::class,'update'])->name('admin.companies.update');
+    Route::delete('admin/companies/{company}',[CompanyController::class,'delete'])->name('admin.companies.delete');
+
 
     Route::get('saler/products',[ProductsController::class,'index'])->name('saler.products.index');
     Route::get('saler/products/{product}',[ProductsController::class,'show'])->name('saler.products.show');

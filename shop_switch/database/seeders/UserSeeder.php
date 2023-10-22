@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Company;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\User;
@@ -33,5 +34,16 @@ class UserSeeder extends Seeder
             'password'=>'admin',
         ])->assignRole('Saler');
         $user_saler->markEmailAsVerified();
+
+
+        $user_saler_admin = User::create([
+            'name'=>'Saler Admin',
+            'email'=>'saleradmin@gmail.com',
+            'password'=>'admin',
+        ])->assignRole('Saler Admin');
+        $user_saler_admin->markEmailAsVerified();
+
+
+
     }
 }

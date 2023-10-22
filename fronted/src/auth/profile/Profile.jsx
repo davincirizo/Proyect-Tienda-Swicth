@@ -83,8 +83,6 @@ export default function Profile (props){
         setFile(e)
         setURL_File(url)
         setfileName(e.name)
-
-
     }
 
     const edit_user = async (data) =>{

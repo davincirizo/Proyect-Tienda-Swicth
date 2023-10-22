@@ -19,6 +19,8 @@ import {PulseLoader} from "react-spinners";
 import {useState} from "react";
 import Profile from "../../auth/profile/Profile.jsx";
 import AvatarUser from "../../general/AvatarUser.jsx";
+import HomeWorkIcon from "@mui/icons-material/HomeWork";
+import storage from "../../storage/Storage.jsx";
 
 
 export default function NavBarSaler() {
@@ -68,6 +70,7 @@ export default function NavBarSaler() {
           handleMenuClose={handleMenuClose}
       />
 
+
       <Logout
             setLoading={setLoading}
         />
@@ -112,6 +115,11 @@ export default function NavBarSaler() {
           </Badge>
         </IconButton>
         <p>Notifications</p>
+      </MenuItem>
+      <MenuItem>
+        <IconButton>
+          <HomeWorkIcon/>
+        </IconButton>
       </MenuItem>
       <MenuItem onClick={handleProfileMenuOpen}>
         <IconButton
@@ -166,6 +174,20 @@ export default function NavBarSaler() {
                 <NotificationsIcon />
               </Badge>
             </IconButton>
+            {storage.get('authUser') && storage.get('authUser').roles.some(role => role.permissions.some(permission => permission.name == 'saler.companies.index' )) ?
+                (<IconButton
+                  size="large"
+                  edge="end"
+                  aria-label="account of current user"
+                  aria-controls={menuId}
+                  aria-haspopup="true"
+                  color="inherit">
+                  <Link to='/profile/companies'>
+                      <HomeWorkIcon/>
+                  </Link>
+
+              </IconButton>):null}
+
             <IconButton
               size="large"
               edge="end"

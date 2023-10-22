@@ -23,9 +23,8 @@ export default function SetChangePasswordProfile(){
                 }
             })
             setLoading(false)
-            notification_succes(res.data.msg)
             storage.set('authUser',res.data.user)
-            navigate('/')
+            navigate('/email_verfied')
 
         }
         catch(e){

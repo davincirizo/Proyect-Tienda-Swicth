@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Company;
 use App\Models\PersonalAccessTokenInherit;
 use App\Models\ResetEmail;
 use App\Models\User;
@@ -16,7 +17,11 @@ use UAParser\Parser;
 
 class AuthController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth-verify-role')->only('update_companies','index_companies');
 
+    }
     public function register(Request $request){
         $rules = [
             'name' => 'required',
@@ -400,4 +405,56 @@ class AuthController extends Controller
             'msg' => 'Contrasenna incorrecta',
         ],400);
 }
+
+    public function index_companies(Request $request){
+        $user = PersonalAccessTokenInherit::findUser($request->bearerToken());
+        $users = User::all()->where('active' ,'=', 1);
+        foreach ($user->companies as $company) {
+            $company->id_atrributes(['users']);
+        }
+        return response()->json([
+            'status' => true,
+            'companies' =>$user->companies,
+            'users'=>$users
+        ],200);
+
+    }
+
+    public function update_companies(Request $request,Company $company){
+        $user_token = PersonalAccessTokenInherit::findUser($request->bearerToken());
+        Auth::login($user_token);
+        $this->authorize('user_companies',[$user_token,$company]);
+        $rules = [
+            'name' => 'required',
+        ];
+        $validator = \Validator::make($request->input(),$rules);
+        if ($validator->fails()){
+            return response()->json([
+                'status' => false,
+                'errors' => $validator->errors(),
+            ],400);
+        }
+        $company->update([
+            'name'=>$request->name,
+            'description'=> $request->description
+        ]);
+        $company->syncUsers(json_decode(request('users')));
+        if($request->file('image')){
+            $company->image ? Storage::delete($company->image):null;
+            $file = $request->file('image');
+            $url = Storage::put('company',$file);
+            $company->image = $url;
+        }
+        $company->save();
+        $company->id_atrributes(['users']);
+        return response()->json([
+            'res' => true,
+            'msg'=>'Compañia actualizada correctamente',
+            'company' => $company
+        ], 200);
+
+
+    }
+
+
 }
